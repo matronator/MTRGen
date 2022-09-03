@@ -1,0 +1,70 @@
+{
+    "name": "matronator/mtrgen",
+    "description": "PHP file generator engine for generating files from templates.",
+    "type": "library",
+    "keywords": ["generator", "file generator", "php-generator", "yaml-templates", "json-templates", "neon", "file generation", "file templates"],
+    "license": "MIT",
+    "version": "1.0.0",
+    "readme": "README.md",
+    "autoload": {
+        "psr-4": {
+            "Matronator\\Mtrgen\\": [
+                "src/Mtrgen/"
+            ]
+        }
+    },
+    "bin": "bin/mtrgen",
+    "authors": [
+        {
+            "name": "Matronator",
+            "email": "5470780+matronator@users.noreply.github.com",
+            "homepage": "https://matronator.com",
+            "role": "Developer"
+        }
+    ],
+    "scripts": {
+        "post-root-package-install": [
+            "php bin/console completion bash | sudo tee /etc/bash_completion.d/console-events-terminate"
+        ],
+        "test": "tester ."
+    },
+    "require": {
+        "php": ">=7.4",
+        "nette/php-generator": "^3.0",
+        "symfony/console": "^5.4",
+        "nette/neon": "^3.3",
+        "nette/safe-stream": "^2.5",
+        "symfony/yaml": "^5.4",
+        "symfony/validator": "^5.4",
+        "nette/finder": "^2.5",
+        "opis/json-schema": "^2.3",
+        "matronator/parsem": "^1.0"
+    },
+    "minimum-stability": "stable",
+    "config": {
+        "platform": {
+			"php": "7.4"
+		}
+    },
+    "funding": [
+        {
+            "type": "patreon",
+            "url": "https://www.patreon.com/bePatron?u=34136375"
+        },
+        {
+            "type": "paypal",
+            "url": "https://www.paypal.com/paypalme/matronator"
+        },
+        {
+            "type": "ko-fi",
+            "url": "https://ko-fi.com/matronator"
+        },
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/matronator"
+        }
+    ],
+    "require-dev": {
+        "nette/tester": "^2.4"
+    }
+}

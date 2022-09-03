@@ -1,0 +1,347 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "https://files.matronator.com/public/mtrgen/1.0.2/mtrgen-template-schema.json",
+  "title": "MTRGen Template Files Schema",
+  "description": "Schema for YAML/JSON templates for MTRGen PHP file generator.",
+  "$ref": "#/definitions/Template",
+  "definitions": {
+    "Template": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "file": {
+          "$ref": "#/definitions/File"
+        }
+      },
+      "required": [
+        "name",
+        "filename",
+        "path",
+        "file"
+      ],
+      "title": "Template",
+      "description": "Define the name of the template, filename of the generated file and path where the file should be generated"
+    },
+    "File": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strict": {
+          "type": "boolean"
+        },
+        "namespace": {
+          "$ref": "#/definitions/Namespace"
+        },
+        "class": {
+          "$ref": "#/definitions/Class"
+        },
+        "interface": {
+          "$ref": "#/definitions/Interface"
+        },
+        "trait": {
+          "$ref": "#/definitions/Trait"
+        },
+        "use": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [],
+      "title": "File",
+      "description": "Root level of the file containing the namespace, classes, use statements, etc"
+    },
+    "Namespace": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "use": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "class": {
+          "$ref": "#/definitions/Class"
+        },
+        "interface": {
+          "$ref": "#/definitions/Interface"
+        },
+        "trait": {
+          "$ref": "#/definitions/Trait"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Namespace"
+    },
+    "Class": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "modifier": {
+          "enum": ["final", "abstract"]
+        },
+        "extends": {
+          "type": "string"
+        },
+        "implements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "constants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Constant"
+          }
+        },
+        "props": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Prop"
+          }
+        },
+        "methods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Method"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "traits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Class"
+    },
+    "Interface": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "extends": {
+          "type": "string"
+        },
+        "constants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Constant"
+          }
+        },
+        "methods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Method"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Interface"
+    },
+    "Trait": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "props": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Prop"
+          }
+        },
+        "methods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Method"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Trait"
+    },
+    "Constant": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": ["array", "boolean", "integer", "number", "string", "object", "null"]
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "Constant"
+    },
+    "Method": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "visibility": {
+          "enum": ["public", "private", "protected"]
+        },
+        "name": {
+          "type": "string"
+        },
+        "modifier": {
+          "enum": ["final", "abstract"]
+        },
+        "return": {
+          "type": "string"
+        },
+        "ref": {
+          "type": "boolean"
+        },
+        "nullable": {
+          "type": "boolean"
+        },
+        "params": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Param"
+          }
+        },
+        "body": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Method"
+    },
+    "Param": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": ["array", "boolean", "integer", "number", "string", "object", "null"]
+        },
+        "promoted": {
+          "type": "boolean"
+        },
+        "nullable": {
+          "type": "boolean"
+        },
+        "ref": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Param"
+    },
+    "Prop": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "visibility": {
+          "enum": ["public", "private", "protected"]
+        },
+        "type": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": ["array", "boolean", "integer", "number", "string", "object", "null"]
+        },
+        "static": {
+          "type": "boolean"
+        },
+        "init": {
+          "type": "boolean"
+        },
+        "nullable": {
+          "type": "boolean"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Prop"
+    }
+  }
+}

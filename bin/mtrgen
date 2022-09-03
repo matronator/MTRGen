@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+$root_app = dirname(__DIR__);
+
+if (!is_file($root_app . '/vendor/autoload.php')) {
+    $root_app = dirname(__DIR__, 4);
+}
+
+require_once $root_app . '/vendor/autoload.php';
+
+use Matronator\Mtrgen\Cli\Application;
+
+$application = new Application;
+$application->app->run();
