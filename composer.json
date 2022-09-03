@@ -4,7 +4,6 @@
     "type": "library",
     "keywords": ["generator", "file generator", "php-generator", "yaml-templates", "json-templates", "neon", "file generation", "file templates"],
     "license": "MIT",
-    "version": "1.0.0",
     "readme": "README.md",
     "autoload": {
         "psr-4": {
