@@ -12,7 +12,7 @@ class Application
 
     public function __construct()
     {
-        $this->app = new ConsoleApplication('Mtrgen', '1.4.1');
+        $this->app = new ConsoleApplication('MTRGen', '1.0.0');
         $this->app->addCommands([
             new GenerateCommand(),
             new SaveTemplateCommand(),

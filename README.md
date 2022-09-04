@@ -2,12 +2,12 @@
 
 ![MTRGen Logo](.github/logo.png)
 
-Automatically generate Entity and related files from the console.
+File generator engine that can generate PHP files from JSON/YAML/NEON templates.
 
 ## Instalation
 
 ```
-composer require matronator/generator --dev
+composer require matronator/mtrgen --dev
 ```
 
 #### Troubleshooting
@@ -15,7 +15,7 @@ composer require matronator/generator --dev
 If you get this error when trying to install:
 
 ```
-matronator/generator dev-master requires composer-runtime-api ^2.2 -> found composer-runtime-api[2.1.0] but it does not match the constraint.
+matronator/mtrgen v1.0.0 requires composer-runtime-api ^2.2 -> found composer-runtime-api[2.1.0] but it does not match the constraint.
 ```
 
 Run this command to update composer to the latest version:
@@ -26,57 +26,36 @@ composer self-update
 
 If you can't or don't want to update composer, use version `"^1.0"` of this package as that doesn't depend on Composer runtime API 2.2.
 
-## Usage
+## Quickstart
 
 You run the script from terminal using this command:
 
 ```
-# Start interactive utility that walks you through steps to generate files
-vendor/bin/mtrgen
-
 # To list all available commands
 vendor/bin/mtrgen list
 
-# To see all generate commands
-vendor/bin/mtrgen list generate
-
-# To see usage of generate command
+# To see usage of the generate command
 vendor/bin/mtrgen generate --help
 vendor/bin/mtrgen gen -h
 
-# Generate entity only
-vendor/bin/mtrgen generate:entity EntityName
-vendor/bin/mtrgen gen:e EntityName
+# Generate from file
+vendor/bin/mtrgen generate --path=my/folder/template.json
+vendor/bin/mtrgen gen -p my/folder/template.json
 
-# Generate entity, repo and facade
-vendor/bin/mtrgen generate --type=database Name
-vendor/bin/mtrgen gen -t database Name
+# Generate from the global store
+vendor/bin/mtrgen generate TemplateName
+
+# Save a template to the global store
+vendor/bin/mtrgen save path/to/template.json
+vendor/bin/mtrgen s path/to/template.json
+
+# Optionally provide an alias to save the template under
+vendor/bin/mtrgen save path/to/template.json --alias=NewName
+
+# Remove a template from the global store
+vendor/bin/mtrgen remove TemplateName
+vendor/bin/mtrgen r TemplateName
 ```
-
-#### Generating from config file
-
-You can specify if you want to generate the files from a config by setting the `--config` (or the shorthand `-c`) option to the path to your config file, like this:
-
-```
-vendor/bin/mtrgen generate --config=path/to/config/file.yml
-```
-
-You can find a sample config file in the `src/` folder under a name `config.sample.yml`. So if you installed this via Composer, it would be in `vendor/matronator/generator/src/config.sample.yml`.
-
-## Roadmap
-
-Planned features for the project. Will be adding features as I think of them.
-
-* [x] Generate files
-* [x] Generate files from config
-* [x] Generate from templates
-* [x] Generate module files
-  * [x] BasePresenter
-  * [x] Presenter
-  * [x] Templates
-* [ ] Add global config to customize project structure
-  * [ ] Entity Traits to use
-  * [ ] Paths to files and configs
 
 ## License
 
