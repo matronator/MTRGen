@@ -1,4 +1,4 @@
-# Matronator/Generator
+# MTRGen
 
 ![MTRGen Logo](https://github.com/matronator/MTRGen/blob/main/.github/logo.png?raw=true)
 

@@ -1,3 +1,46 @@
-title: "MTRGen"
 markdown: kramdown
 remote_theme: just-the-docs/just-the-docs
+
+kramdown:
+  syntax_highlighter_opts:
+    block:
+      line_numbers: true
+compress_html:
+  ignore:
+    envs: all
+
+# Jekyll SEO
+title: MTRGen Documentation
+tagline: PHP file generator
+description: File generator engine that can generate PHP files from JSON/YAML/NEON templates.
+author:
+  name: Matronator
+  url: https://matronator.com
+logo: assets/images/logo-square.png
+social:
+  name: matronator
+  links:
+    - https://github.com/matronator
+    - https://www.linkedin.com/in/matronator
+
+# Navigation
+aux_links:
+  "View on GitHub":
+    "//github.com/matronator/MTRGen"
+heading_anchors: true
+callouts:
+  warning:
+    title: Warning
+    color: red
+  info:
+    title: Info
+    color: blue
+  tip:
+    title: Tip
+    color: green
+  caution:
+    title: Caution
+    color: yellow
+  note:
+    title: Note
+    color: purple
