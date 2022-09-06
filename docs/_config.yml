@@ -16,7 +16,7 @@ description: "File generator engine that can generate PHP files from JSON/YAML/N
 author:
   name: Matronator
   url: https://matronator.com
-logo: "assets/images/logo-square.png"
+logo: "assets/images/logo-main.png"
 social:
   name: matronator
   links:
