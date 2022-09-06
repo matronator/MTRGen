@@ -2,7 +2,7 @@
 nav_order: 1
 ---
 
-# MTRGen
+# Introduction
 
 ![MTRGen Logo](assets/images/logo.png)
 
