@@ -1,3 +1,8 @@
+---
+title: "Introduction"
+nav_order: 1
+---
+
 # MTRGen
 
 ![MTRGen Logo](assets/images/logo.png)
