@@ -4,7 +4,14 @@
 
 File generator engine that can generate PHP files from JSON/YAML/NEON templates.
 
+## Requirements
+
+- PHP >= 7.4
+- Composer
+
 ## Instalation
+
+Install with Composer:
 
 ```
 composer require matronator/mtrgen --dev

@@ -1,10 +1,17 @@
-# Matronator/Generator
+# MTRGen
 
-![MTRGen Logo](.github/logo.png)
+![MTRGen Logo](assets/images/logo.png)
 
 File generator engine that can generate PHP files from JSON/YAML/NEON templates.
 
+## Requirements
+
+- PHP >= 7.4
+- Composer
+
 ## Instalation
+
+Install with Composer:
 
 ```
 composer require matronator/mtrgen --dev
