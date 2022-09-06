@@ -38,7 +38,7 @@ Now when the parser reads the template, it finds these parameters and use them a
 
 You can then assign any value you want to these parameters during generation. The tool will automatically ask you to provide values for the arguments if you don't provide any in the initial command.
 
-![Terminal output](img/template-parameters.png)
+![Terminal output](https://user-images.githubusercontent.com/5470780/188733063-6018db5d-f8ef-4ca7-9bf0-b5ed07e45fa0.png)
 
 But if you know what parameters the template needs, you can pass them as an argument to the `generate` command:
 
