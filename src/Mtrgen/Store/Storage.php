@@ -166,6 +166,10 @@ class Storage
         return $store->templates;
     }
 
+    /**
+     * Create and save the global store
+     * @return void
+     */
     private function createStore(): void
     {
         $store = (object) [
@@ -175,26 +179,47 @@ class Storage
         $this->saveStore($store);
     }
 
+    /**
+     * Load the global store to an object
+     * @return object
+     */
     private function loadStore(): object
     {
         return json_decode(file_get_contents(Path::safe($this->store)));
     }
 
+    /**
+     * Save the store to a file
+     * @return void
+     * @param object $store
+     */
     private function saveStore(object $store): void
     {
         file_put_contents(Path::safe($this->store), json_encode($store));
     }
 
+    /**
+     * Save an entry to the store object with `$name` as the object key and `$filename` as the value
+     * @return object
+     * @param object $store
+     * @param string $name Name under which the template will be stored
+     * @param string $filename
+     */
     private function entry(object $store, string $name, string $filename): object
     {
         $store->templates->{$name} = $filename;
         return $store;
     }
 
+    /**
+     * Put the entry to the store object and save the store file.
+     * @return void
+     * @param string $name
+     * @param string $filename
+     */
     private function saveEntry(string $name, string $filename): void
     {
-        $store = $this->loadStore();
-        $store->templates->{$name} = $filename;
+        $store = $this->entry($this->loadStore(), $name, $filename);
         $this->saveStore($store);
     }
 
