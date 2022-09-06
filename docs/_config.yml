@@ -10,9 +10,9 @@ compress_html:
     envs: all
 
 # Jekyll SEO
-title: MTRGen Documentation
-tagline: PHP file generator
-description: File generator engine that can generate PHP files from JSON/YAML/NEON templates.
+title: "MTRGen Docs"
+tagline: "PHP file generator"
+description: "File generator engine that can generate PHP files from JSON/YAML/NEON templates."
 author:
   name: Matronator
   url: https://matronator.com
