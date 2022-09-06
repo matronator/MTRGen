@@ -35,13 +35,13 @@ file:
 
     constants: # (optional) array of class constants
       - name: string # constant name
-        value: number # constant value
+        value: any # constant value
 
     props: # (optional) array of class properties
       - name: string # property name
         visibility: private|public|protected # (optional) property visibility - public if not specified
         type: string # (optional) property type
-        value: app/model/database/entity # (optional) property value
+        value: any # (optional) property value
 
   interface: # (optional)
     name: string # name of the interface
