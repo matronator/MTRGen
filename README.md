@@ -1,6 +1,6 @@
 # MTRGen
 
-![MTRGen Logo](assets/images/logo.png)
+![MTRGen Logo](docs/assets/images/logo.png)
 
 File generator engine that can generate PHP files from JSON/YAML/NEON templates.
 
