@@ -7,14 +7,14 @@ In addition to the built-in generators, you can also make your own using **gener
 Generator templates (or just templates) describe the structure of the generated file. Templates can be either YAML, JSON or NEON files and they have to conform to a JSON schema. We will talk more about the schema in the next chapter (*see [mtrgen-template-schema.json](template-structure.md#mtrgen-template-schema)*).
 
 {: .tip }
-It is recommended to name your templates with a `.template` suffix after the name just before the extension (eg. `entity.template.yaml`). If you do that, the [MTRGen Templates Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=matronator.mtrgen-yaml-templates) VSCode extension, will automatically assign the correct schema to all `*.template.(yaml|yml|json|neon)` files, giving you auto-completion and instant validation.
+> It is recommended to name your templates with a `.template` suffix after the name just before the extension (eg. `entity.template.yaml`). If you do that, the [MTRGen Templates Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=matronator.mtrgen-yaml-templates) VSCode extension, will automatically assign the correct schema to all `*.template.(yaml|yml|json|neon)` files, giving you auto-completion and instant validation.
 
 ## Template syntax
 
 Even though generator templates are just regular YAML/JSON/NEON files, they are run through a custom template parser which enables some extra features using a special syntax.
 
 {: .info }
-As of right now, there's currently only one such feature implemented (*template parameters*), but in the future more might come.
+> As of right now, there's currently only one such feature implemented (*template parameters*), but in the future more might come.
 
 You can define **template parameters** anywhere in the template using `<%` and `%>` around the parameter name which can be any alphanumeric string and can contain underscores (basically the name must match this regex `[a-zA-Z0-9_]+?`).
 

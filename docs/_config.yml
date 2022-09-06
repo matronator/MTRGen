@@ -28,6 +28,8 @@ aux_links:
   "View on GitHub":
     "//github.com/matronator/MTRGen"
 heading_anchors: true
+
+# Callouts
 callouts:
   warning:
     title: Warning
