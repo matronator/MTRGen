@@ -7,7 +7,7 @@ parent: Templates
 
 # Template structure
 
-As mentioned earlier, the template parser supports YAML, JSON and NEON files, so you can write your templates using any of these formats. All templates must follow the same structure, which is defined in a JSON schema. You can find the full schema here: [mtrgen-template-schema.json](https://files.matronator.com/public/mtrgen/mtrgen-template-schema.json)
+As mentioned earlier, the template parser supports YAML, JSON and NEON files, so you can write your templates using any of these formats. All templates must follow the same structure, which is defined in a JSON schema. You can find the full schema here: [mtrgen-template-schema.json](https://files.matronator.com/public/mtrgen/latest/mtrgen-template-schema.json)
 
 Here is a simplified version of the schema in YAML format for better readability.
 
