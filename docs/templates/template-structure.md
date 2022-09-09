@@ -24,7 +24,7 @@ file:
   strict: true # (optional) boolean - if true, the file will start by declaring strict_types=1
 
   use: # (optional) a string[] array with a list of dependencies to define with a use statement
-    - string
+    - string # you can specify an alias for your use statement like this: Some\Class\Name as MyAlias
     - string
     - string
 
@@ -42,6 +42,14 @@ file:
         visibility: private|public|protected # (optional) property visibility - public if not specified
         type: string # (optional) property type
         value: any # (optional) property value
+
+    methods: # (optional) array of class methods
+      - name: string # method name
+        return: string # (optional) the return type of the method
+        body: # (optional) array of string[] where each entry represents single line
+          - string
+          - string
+          - string
 
   interface: # (optional)
     name: string # name of the interface

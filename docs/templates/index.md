@@ -45,7 +45,11 @@ The filter can be any PHP function with the variable used as the function's argu
 
 *So far you can specify only one filter per variable declaration, but that will probably change in the future.*
 
-### CLI usage
+### Template syntax highlighting for VS Code
+
+To get syntax highlighting for template files (highlight/colorize `<% variable|filter %>` even inside strings), you can download the [MTRGen Templates Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=matronator.mtrgen-yaml-templates) extension for VS Code.
+
+## CLI usage
 
 Now when the parser reads the template, it finds these variables and use them as arguments for the CLI tool during the generation process.
 
@@ -58,7 +62,3 @@ But if you know what parameters the template needs, you can pass them as an argu
 ```sh
 vendor/bin/mtrgen generate --path=my.template.yaml name=Hello anotherArg=app/entity/test numberArg=42
 ```
-
-### Template syntax highlighting for VS Code
-
-To get syntax highlighting for template files (highlight/colorize `<% variable|filter %>` even inside strings), you can download the [MTRGen Templates Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=matronator.mtrgen-yaml-templates) extension for VS Code.
