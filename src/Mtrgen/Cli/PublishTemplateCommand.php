@@ -1,0 +1,69 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Matronator\Mtrgen\Cli;
+
+use Matronator\Mtrgen\Registry\Connection;
+use Matronator\Mtrgen\Template\Generator;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Validation;
+
+// #[AsCommand('generate:entity', 'Generates an Entity file', ['gen:entity'])]
+class PublishTemplateCommand extends Command
+{
+    protected static $defaultName = 'publish';
+    protected static $defaultDescription = 'Publish template to the online template repository.';
+
+    public function configure(): void
+    {
+        $this->setAliases(['pub']);
+        $this->addArgument('path', InputArgument::REQUIRED, 'Path to the template file.');
+    }
+
+    public function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $io = new SymfonyStyle($input, $output);
+
+        $path = $input->getArgument('path') ?? null;
+
+        $helper = $this->getHelper('question');
+        if (!$path) {
+            $io->newLine();
+            $pathQuestion = new Question('<comment><options=bold>Enter the path to your template</>:</comment> ');
+            $validatePath = Validation::createCallable(new Regex([
+                'pattern' => '/^(?![\/])(?![.+?\/]*[\/]$)[.+?\/]*/',
+                'message' => 'Value must be a valid path without leading or trailing slashes.',
+            ]));
+            $pathQuestion->setValidator($validatePath);
+            $path = $helper->ask($input, $output, $pathQuestion);
+            $io->newLine();
+        }
+
+        $connection = new Connection;
+        $response = $connection->postTemplate($path, $output);
+        if ($response) {
+            if ($response === 'OK') {
+                $name = Generator::getName($path);
+                $output->writeln("<fg=green>Template '$name' published!</>");
+                $io->newLine();
+
+                return self::SUCCESS;
+            }
+
+            $io->text($response);
+            $io->newLine();
+
+            return self::FAILURE;
+        }
+
+        $io->error("File '$path' doesn't exists");
+        return self::FAILURE;
+    }
+}

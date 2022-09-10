@@ -165,4 +165,14 @@ class Path
     {
         return 'nette.safe://' . $filename;
     }
+
+    public static function getRoot(): string
+    {
+        return __DIR__ . '/../../../';
+    }
+
+    public static function makeAbsolute(string $path): string
+    {
+        return self::canonicalize(self::getRoot() . self::canonicalize($path));
+    }
 }
