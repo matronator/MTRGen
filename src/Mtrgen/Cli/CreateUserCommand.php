@@ -9,7 +9,6 @@ use Matronator\Mtrgen\Registry\Profile;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -17,17 +16,16 @@ use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Validation;
 
 // #[AsCommand('generate:entity', 'Generates an Entity file', ['gen:entity'])]
-class LoginCommand extends Command
+class CreateUserCommand extends Command
 {
-    protected static $defaultName = 'login';
-    protected static $defaultDescription = 'Login to the online registry.';
+    protected static $defaultName = 'signup';
+    protected static $defaultDescription = 'Create new user account in the online registry.';
 
     public function configure(): void
     {
-        $this->setAliases(['l']);
+        $this->setAliases(['sign']);
         $this->addArgument('username', InputArgument::REQUIRED, 'Username.');
         $this->addArgument('password', InputArgument::REQUIRED, 'Password.');
-        $this->addOption('duration', 'd', InputOption::VALUE_REQUIRED, 'The duration (in hours) for which the user should stay logged in. Use 0 to never logout - not recommended! (default=24)');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
@@ -36,12 +34,11 @@ class LoginCommand extends Command
 
         $username = $input->getArgument('username') ?? null;
         $password = $input->getArgument('password') ?? null;
-        $duration = (int) ($input->getOption('duration') ?? 24);
 
         $helper = $this->getHelper('question');
         if (!$username) {
             $io->newLine();
-            $usernameQuestion = new Question('<comment><options=bold>Enter your username</>:</comment> ');
+            $usernameQuestion = new Question('<comment><options=bold>Enter the username you want to register under</>:</comment> ');
             $validateName = Validation::createCallable(new Regex([
                 'pattern' => '/^[a-zA-Z0-9_-]+?$/',
                 'message' => 'Username can only contain letters, numbers, dash and underscore.',
@@ -53,23 +50,24 @@ class LoginCommand extends Command
 
         if (!$password) {
             $io->newLine();
-            $passwordQuestion = new Question('<comment><options=bold>Enter your password</>:</comment> ');
+            $passwordQuestion = new Question('<comment><options=bold>Enter your password (min. 8 characters, at least 1 number and 1 uppercase and lowercase character)</>:</comment> ');
+            $validatePassword = Validation::createCallable(new Regex([
+                'pattern' => '/^(.{0,7}|[^0-9]*|[^A-Z]*|[^a-z]*)$/',
+                'message' => 'Password must be at least 8 characters long and must contain at least 1 number, 1 lowercase and 1 uppercase character.',
+            ]));
+            $passwordQuestion->setValidator($validatePassword);
             $password = $helper->ask($input, $output, $passwordQuestion);
             $io->newLine();
         }
 
         $connection = new Connection;
-        $response = $connection->login($username, $password, $duration);
-
-        if (!isset($response->status) || $response->status !== 'success' || !isset($response->token)) {
-            $io->error($response->message ?? 'Something went wrong. Try again.');
+        $response = $connection->createUser($username, $password);
+        if ($response !== 'OK') {
+            $io->error('Something went wrong.');
             return self::FAILURE;
         }
 
-        $profile = new Profile();
-        $profile->writeToProfile($username, $response->token);
-
-        $io->text("<fg=green>Logged in as $username.</>");
+        $io->text("<fg=green>User $username created.</>");
         $io->newLine();
         return self::SUCCESS;
     }

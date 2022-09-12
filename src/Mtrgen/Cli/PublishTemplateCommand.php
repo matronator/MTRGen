@@ -48,19 +48,24 @@ class PublishTemplateCommand extends Command
 
         $connection = new Connection;
         $response = $connection->postTemplate($path, $output);
-        if ($response) {
-            if ($response === 'OK') {
-                $name = Generator::getName($path);
-                $output->writeln("<fg=green>Template '$name' published!</>");
-                $io->newLine();
-
-                return self::SUCCESS;
-            }
-
+        if (is_string($response)) {
             $io->text($response);
             $io->newLine();
 
             return self::FAILURE;
+        }
+
+        if (is_object($response)) {
+            if ($response->status !== 'success') {
+                $io->text('<fg=red>'.$response->status.'</>');
+                $io->error($response->message);
+                return self::FAILURE;
+            }
+            $name = Generator::getName($path);
+            $output->writeln("<fg=green>Template '$name' published!</>");
+            $io->newLine();
+
+            return self::SUCCESS;
         }
 
         $io->error("File '$path' doesn't exists");

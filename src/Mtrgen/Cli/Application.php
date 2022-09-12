@@ -19,6 +19,8 @@ class Application
             new RemoveTemplateCommand(),
             new PublishTemplateCommand(),
             new LoginCommand(),
+            new AddTemplateCommand(),
+            new CreateUserCommand(),
         ]);
         $this->app->setDefaultCommand('generate');
     }

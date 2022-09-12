@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Matronator\Mtrgen\Registry;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Matronator\Mtrgen\Store\Path;
-use Matronator\Mtrgen\Store\Storage;
 use Matronator\Parsem\Parser;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\StyleInterface;
 
 class Connection
 {
@@ -18,16 +17,109 @@ class Connection
 
     public string $apiUrl;
 
-    public string $profile;
-
     public function __construct()
     {
-        $storage = new Storage();
+        $this->apiUrl = self::isDebug() ? self::DEBUG_URL : self::PROD_URL;
+    }
 
-        $this->profile = Path::canonicalize($storage->homeDir . '/profile.json');
+    public function createUser(string $username, string $password)
+    {
+        $url = $this->apiUrl . '/api/signup';
+        $client = new Client;
+        $response = $client->post($url, ['form_params' => [
+            'username' => $username,
+            'password' => $password,
+        ]]);
 
-        if (!file_exists($this->profile))
-            $this->createProfile();
+        return $response->getReasonPhrase();
+    }
+
+    public function login(string $username, string $password, int $duration = 24): object
+    {
+        $client = new Client;
+        $url = $this->apiUrl . '/api/login';
+        $response = $client->post($url, ['form_params' => [
+            'username' => $username,
+            'password' => $password,
+            'duration' => $duration,
+        ]]);
+
+        return json_decode($response->getBody()->getContents());
+    }
+
+    public function getTemplate(string $identifier): object
+    {
+        [$vendor, $name] = explode('/', $identifier);
+
+        $url = $this->apiUrl . "/api/templates/$vendor/$name/get";
+
+        $client = new Client();
+        $response = $client->get($url);
+        $contentType = $response->getHeaderLine('Content-Type');
+
+        switch ($contentType) {
+            case 'application/json':
+                $extension = 'json';
+            case 'text/x-yaml':
+            case 'application/x-yaml':
+                $extension = 'yaml';
+            case 'application/x-neon':
+            case 'text/x-neon':
+                $extension = 'neon';
+            default:
+                $extension = '';
+        }
+
+        return (object) [
+            'filename' => "$name.template.$extension",
+            'contents' => $response->getBody()->getContents(),
+        ];
+    }
+
+    public function postTemplate(string $path, ?OutputInterface $io = null): mixed
+    {
+        $profile = new Profile;
+        if (!$profile->authenticate())
+            return '<fg=red>You must login first.</>';
+
+        $matched = preg_match('/^(.+\/)?(.+?\.(json|yml|yaml|neon))$/', $path, $matches);
+        if (!$matched)
+            return "Couldn't get filename from path '$path'.";
+
+
+        if (!Parser::isValid(Path::makeAbsolute($path), file_get_contents(Path::makeAbsolute($path))))
+            return '<fg=red>Invalid template.</>';
+
+        $filename = $matches[2];
+        $template = Parser::decodeByExtension($filename);
+
+        $profileObject = $profile->loadProfile();
+
+        $body = [
+            'username' => $profileObject->username,
+            'token' => $profileObject->token,
+            'filename' => $filename,
+            'name' => $template->name,
+            'contents' => file_get_contents(Path::makeAbsolute($path)),
+        ];
+
+        if ($io) {
+            $io->writeln('');
+            $io->writeln('<fg=green>Publishing...</>');
+        }
+
+        $client = new Client();
+        $url = $this->apiUrl . "/api/templates";
+
+        $response = $client->request('POST', $url, ['form_params' => $body, 'progress' => function () use ($io) {
+            if ($io) {
+                $io->write('.');
+            }
+        }]);
+
+        if ($io) $io->writeln('');
+
+        return json_decode($response->getBody()->getContents());
     }
 
     public static function isDebug()
@@ -35,87 +127,5 @@ class Connection
         $config = json_decode(file_get_contents(__DIR__ . '/../../../config.json'));
 
         return $config->debug ?? false;
-    }
-
-    public function createProfile()
-    {
-        $profile = (object) [
-            'username' => '',
-            'password' => '',
-        ];
-
-        $this->saveProfile($profile);
-    }
-
-    public function saveProfile(object $profile)
-    {
-        file_put_contents(Path::safe($this->profile), json_encode($profile));
-    }
-
-    private function loadProfile(): object
-    {
-        return json_decode(file_get_contents(Path::safe($this->profile)));
-    }
-
-    public function writeToProfile(string $username, string $password)
-    {
-        $profile = $this->loadProfile();
-
-        $profile->username = $username;
-        $profile->password = password_hash($password, PASSWORD_DEFAULT);
-
-        $this->saveProfile($profile);
-    }
-
-    public function getTemplate(string $identifier): string
-    {
-        [$vendor, $name] = explode('/', $identifier);
-
-        $urlBase = self::isDebug() ? self::DEBUG_URL : self::PROD_URL;
-
-        $url = $urlBase . "/api/templates/$vendor/$name/get";
-
-        return file_get_contents($url);
-    }
-
-    public function postTemplate(string $path, ?OutputInterface $io = null): string
-    {
-        $urlBase = self::isDebug() ? self::DEBUG_URL : self::PROD_URL;
-        $url = $urlBase . "/api/templates";
-
-        $matched = preg_match('/^(.+\/)?(.+?\.(json|yml|yaml|neon))$/', $path, $matches);
-        if (!$matched)
-            return "Couldn't get filename from path '$path'.";
-
-        $filename = $matches[2];
-
-        $profile = $this->loadProfile();
-        if (!isset($profile->username) || $profile->username === '' || !isset($profile->password) || $profile->password === '')
-            return '<fg=red>You must login first.</>';
-
-        $template = Parser::decodeByExtension($filename);
-
-        $body = [
-            'username' => $profile->username,
-            'password' => $profile->password,
-            'filename' => $filename,
-            'name' => $template->name,
-            'contents' => file_get_contents(Path::makeAbsolute($path)),
-        ];
-
-        $client = new Client();
-        if ($io) {
-            $io->writeln('');
-            $io->writeln('<fg=green>Publishing...</>');
-        }
-        $response = $client->request('POST', $url, ['form_params' => $body, 'progress' => function () use ($io) {
-            if ($io) {
-                $io->write(['.']);
-            }
-        }]);
-
-        $io->writeln('');
-
-        return $response->getReasonPhrase();
     }
 }

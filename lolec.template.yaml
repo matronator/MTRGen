@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=https://files.matronator.com/public/mtrgen/latest/mtrgen-template-schema.json
+name: lolec
+filename: lol.php
+path: app/
+file:
+  strict: true
