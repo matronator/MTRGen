@@ -27,13 +27,13 @@ class GenerateCommand extends Command
     private const CUSTOM_TEMPLATE_ANSWER = 'Custom template (enter path to the file)';
 
     protected static $defaultName = 'generate';
-    protected static $defaultDescription = 'Generates a file from template. The template can be specified by name if it\'s saved in the global store, or with a path to the template file.';
+    protected static $defaultDescription = 'Generates a file from template. The template can be specified by name if it\'s saved in the local store, or with a path to the template file.';
 
     public function configure(): void
     {
         $this->setAliases(['gen']);
         $this->addOption('path', 'p', InputOption::VALUE_REQUIRED, 'Optionally you can provide a path to a template file to generate from that file instead.');
-        $this->addArgument('name', InputArgument::OPTIONAL, 'The name of the template to generate under which it\'s saved in the global store.');
+        $this->addArgument('name', InputArgument::OPTIONAL, 'The name of the template to generate under which it\'s saved in the local store.');
         $this->addArgument('args', InputArgument::IS_ARRAY, 'Arguments to pass to the template (\'key=value\' items seperated by space).');
     }
 
@@ -52,6 +52,10 @@ class GenerateCommand extends Command
                 $path = $this->askName($helper, $io, $storage, $input, $output);
             } else {
                 $path = $storage->getFullPath($name);
+                if (!$path) {
+                    $io->text("<options=bold;fg=red>Template '$name' not found in the local store.</>");
+                    return self::FAILURE;
+                }
             }
         }
 

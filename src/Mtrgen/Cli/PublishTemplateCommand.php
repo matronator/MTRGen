@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Matronator\Mtrgen\Cli;
 
 use Matronator\Mtrgen\Registry\Connection;
+use Matronator\Mtrgen\Registry\Profile;
 use Matronator\Mtrgen\Template\Generator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -62,7 +63,9 @@ class PublishTemplateCommand extends Command
                 return self::FAILURE;
             }
             $name = Generator::getName($path);
-            $output->writeln("<fg=green>Template '$name' published!</>");
+            $profile = (new Profile)->loadProfile();
+            $fullname = $profile->username . '/' . $name;
+            $output->writeln("<fg=green>Template '$name' published as '$fullname'!</>");
             $io->newLine();
 
             return self::SUCCESS;

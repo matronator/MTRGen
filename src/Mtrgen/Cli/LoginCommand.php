@@ -24,7 +24,7 @@ class LoginCommand extends Command
 
     public function configure(): void
     {
-        $this->setAliases(['l']);
+        $this->setAliases(['in']);
         $this->addArgument('username', InputArgument::REQUIRED, 'Username.');
         $this->addArgument('password', InputArgument::REQUIRED, 'Password.');
         $this->addOption('duration', 'd', InputOption::VALUE_REQUIRED, 'The duration (in hours) for which the user should stay logged in. Use 0 to never logout - not recommended! (default=24)');

@@ -67,7 +67,7 @@ class CreateUserCommand extends Command
             return self::FAILURE;
         }
 
-        $io->text("<fg=green>User $username created.</>");
+        $io->text("<options=bold;fg=green>User $username created.</> <fg=green>You may now login.</>");
         $io->newLine();
         return self::SUCCESS;
     }

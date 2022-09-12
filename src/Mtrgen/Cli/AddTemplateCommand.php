@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Validation;
 class AddTemplateCommand extends Command
 {
     protected static $defaultName = 'add';
-    protected static $defaultDescription = 'Get template from online registry and save it to the local store.';
+    protected static $defaultDescription = 'Get template from online registry and add it to the local store.';
 
     public function configure(): void
     {

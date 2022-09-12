@@ -6,6 +6,7 @@ namespace Matronator\Mtrgen\Registry;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use Matronator\Mtrgen\Store\Path;
 use Matronator\Parsem\Parser;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -38,11 +39,16 @@ class Connection
     {
         $client = new Client;
         $url = $this->apiUrl . '/api/login';
-        $response = $client->post($url, ['form_params' => [
-            'username' => $username,
-            'password' => $password,
-            'duration' => $duration,
-        ]]);
+        try {
+            $response = $client->post($url, ['form_params' => [
+                'username' => $username,
+                'password' => $password,
+                'duration' => $duration,
+            ]]);
+        } catch (RequestException $e) {
+            if (!$e->hasResponse()) $response = (object) ['status' => 'error', 'message' => 'Something went wrong.'];
+            $response = $e->getResponse();
+        }
 
         return json_decode($response->getBody()->getContents());
     }
@@ -59,20 +65,24 @@ class Connection
 
         switch ($contentType) {
             case 'application/json':
+            case 'text/json':
                 $extension = 'json';
             case 'text/x-yaml':
             case 'application/x-yaml':
+            case 'text/yaml':
                 $extension = 'yaml';
             case 'application/x-neon':
             case 'text/x-neon':
+            case 'text/neon':
                 $extension = 'neon';
             default:
-                $extension = '';
+                $extension = 'neon';
         }
 
         return (object) [
             'filename' => "$name.template.$extension",
             'contents' => $response->getBody()->getContents(),
+            'type' => $contentType,
         ];
     }
 

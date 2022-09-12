@@ -16,7 +16,7 @@ Here is a simplified version of the schema in YAML format for better readability
 ```yaml
 name: string # name of the template
 
-filename: string # name of the generated file
+filename: string # name of the generated file without the `.php` extension
 
 path: string # path where to generate the file
 
