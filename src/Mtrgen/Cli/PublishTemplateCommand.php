@@ -64,7 +64,7 @@ class PublishTemplateCommand extends Command
             }
             $name = Generator::getName($path);
             $profile = (new Profile)->loadProfile();
-            $fullname = $profile->username . '/' . $name;
+            $fullname = strtolower($profile->username . '/' . $name);
             $output->writeln("<fg=green>Template '$name' published as '$fullname'!</>");
             $io->newLine();
 

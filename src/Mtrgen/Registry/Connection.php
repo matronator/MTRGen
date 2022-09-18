@@ -28,20 +28,20 @@ class Connection
         $url = $this->apiUrl . '/api/signup';
         $client = new Client;
         $response = $client->post($url, ['form_params' => [
-            'username' => $username,
+            'username' => strtolower($username),
             'password' => $password,
         ]]);
 
         return $response->getReasonPhrase();
     }
 
-    public function login(string $username, string $password, int $duration = 24): object
+    public function login(string $username, string $password, int $duration = 24): ?object
     {
         $client = new Client;
         $url = $this->apiUrl . '/api/login';
         try {
             $response = $client->post($url, ['form_params' => [
-                'username' => $username,
+                'username' => strtolower($username),
                 'password' => $password,
                 'duration' => $duration,
             ]]);
@@ -60,7 +60,11 @@ class Connection
         $url = $this->apiUrl . "/api/templates/$vendor/$name/get";
 
         $client = new Client();
-        $response = $client->get($url);
+        $response = $client->get($url, [
+            'headers' => [
+                'X-Requested-By' => 'cli',
+            ],
+        ]);
         $contentType = $response->getHeaderLine('Content-Type');
 
         switch ($contentType) {
@@ -109,7 +113,7 @@ class Connection
             'username' => $profileObject->username,
             'token' => $profileObject->token,
             'filename' => $filename,
-            'name' => $template->name,
+            'name' => strtolower($template->name),
             'contents' => file_get_contents(Path::makeAbsolute($path)),
         ];
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Matronator\Mtrgen\Registry;
 
 use Matronator\Mtrgen\Store\Path;
+use Matronator\Mtrgen\Store\Storage;
 
 class Profile
 {
@@ -12,7 +13,8 @@ class Profile
 
     public function __construct()
     {
-        $this->profile = Path::canonicalize('~/.mtrgen/profile.json');
+        $storage = new Storage;
+        $this->profile = Path::canonicalize($storage->homeDir . '/profile.json');
 
         if (!file_exists($this->profile))
             $this->createProfile();
@@ -45,7 +47,7 @@ class Profile
     {
         $profile = $this->loadProfile();
 
-        $profile->username = $username;
+        $profile->username = strtolower($username);
         $profile->token = $token;
 
         return $this->saveProfile($profile);

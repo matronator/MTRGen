@@ -21,6 +21,8 @@ class Application
             new LoginCommand(),
             new AddTemplateCommand(),
             new CreateUserCommand(),
+            new UseCommand(),
+            new ListTemplatesCommand(),
         ]);
         $this->app->setDefaultCommand('generate');
     }
