@@ -59,8 +59,8 @@ file:
 
   namespace: # (optional) If you want to put your classes and whatnot in a namespace, you can define them here
     name: string # fully qualified name of the namespace (eg. App\MyNamespace\DeeperLevel)
+    use: # Same as above
     class: # Same as above
     interface: # Same as above
     trait: # Same as above
-    use: # Same as above
 ```
