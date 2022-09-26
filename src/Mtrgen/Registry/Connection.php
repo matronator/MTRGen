@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Connection
 {
-    public const PROD_URL = 'https://mtrgen.matrogames.com';
+    public const PROD_URL = 'https://www.mtrgen.com/api';
     public const DEBUG_URL = 'http://localhost:8000';
 
     public string $apiUrl;
@@ -25,7 +25,7 @@ class Connection
 
     public function createUser(string $username, string $password)
     {
-        $url = $this->apiUrl . '/api/signup';
+        $url = $this->apiUrl . '/signup';
         $client = new Client;
         $response = $client->post($url, ['form_params' => [
             'username' => strtolower($username),
@@ -38,7 +38,7 @@ class Connection
     public function login(string $username, string $password, int $duration = 24): ?object
     {
         $client = new Client;
-        $url = $this->apiUrl . '/api/login';
+        $url = $this->apiUrl . '/login';
         try {
             $response = $client->post($url, ['form_params' => [
                 'username' => strtolower($username),
@@ -46,8 +46,11 @@ class Connection
                 'duration' => $duration,
             ]]);
         } catch (RequestException $e) {
-            if (!$e->hasResponse()) $response = (object) ['status' => 'error', 'message' => 'Something went wrong.'];
-            $response = $e->getResponse();
+            if (!$e->hasResponse()) {
+                $response = (object) ['status' => 'error', 'message' => 'Something went wrong.'];
+            } else {
+                $response = $e->getResponse();
+            }
         }
 
         return json_decode($response->getBody()->getContents());
@@ -57,7 +60,7 @@ class Connection
     {
         [$vendor, $name] = explode('/', $identifier);
 
-        $url = $this->apiUrl . "/api/templates/$vendor/$name/get";
+        $url = $this->apiUrl . "/templates/$vendor/$name/get";
 
         $client = new Client();
         $response = $client->get($url, [
@@ -123,7 +126,7 @@ class Connection
         }
 
         $client = new Client();
-        $url = $this->apiUrl . "/api/templates";
+        $url = $this->apiUrl . '/templates';
 
         $response = $client->request('POST', $url, ['form_params' => $body, 'progress' => function () use ($io) {
             if ($io) {

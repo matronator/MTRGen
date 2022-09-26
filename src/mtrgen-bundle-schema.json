@@ -1,0 +1,48 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$id": "https://www.mtrgen.com/storage/schemas/bundle/1.0.0/mtrgen-bundle-schema.json",
+    "title": "MTRGen Template Bundle Schema",
+    "description": "Schema for a template bundle for MTRGen PHP file generator.",
+    "$ref": "#/definitions/Bundle",
+    "definitions": {
+        "Bundle": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "templates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Template"
+                    }
+                }
+            },
+            "required": [
+                "name",
+                "templates"
+            ],
+            "title": "Bundle",
+            "description": "Define the name of the bundle and the templates it contains."
+        },
+        "Template": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "path"
+            ],
+            "title": "Template",
+            "description": "Define the name of the template and a path to the template file."
+        }
+    }
+}

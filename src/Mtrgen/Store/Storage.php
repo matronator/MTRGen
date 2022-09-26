@@ -4,25 +4,33 @@ declare(strict_types=1);
 
 namespace Matronator\Mtrgen\Store;
 
+use InvalidArgumentException;
 use Matronator\Mtrgen\FileGenerator;
 use Matronator\Mtrgen\Template\Generator;
 use Matronator\Parsem\Parser;
+use Nette\Neon\Neon;
 use Nette\Utils\Finder;
+use Symfony\Component\Yaml\Yaml;
 
 class Storage
 {
     public string $homeDir;
+    public string $tempDir;
     public string $templateDir;
     public string $store;
 
     public function __construct()
     {
         $this->homeDir = Path::canonicalize('~/.mtrgen');
+        $this->tempDir = Path::canonicalize('~/.mtrgen/temp');
         $this->templateDir = Path::canonicalize('~/.mtrgen/templates');
         $this->store = Path::canonicalize('~/.mtrgen/templates.json');
 
         if (!FileGenerator::folderExist($this->homeDir)) {
             mkdir($this->homeDir, 0777, true);
+        }
+        if (!FileGenerator::folderExist($this->tempDir)) {
+            mkdir($this->tempDir, 0777, true);
         }
         if (!FileGenerator::folderExist($this->templateDir)) {
             mkdir($this->templateDir, 0777, true);
@@ -38,18 +46,62 @@ class Storage
      * @param string $filename
      * @param string|null $alias Alias to save the template under instead of the name defined inside the template
      */
-    public function save(string $filename, ?string $alias = null): bool
+    public function save(string $filename, ?string $alias = null, ?string $bundle = null): bool
     {
         $file = Path::canonicalize($filename);
-        $basename = basename($file);
 
         if (!file_exists($file))
             return false;
+        
+        $basename = $bundle ? $bundle . DIRECTORY_SEPARATOR . basename($file) : basename($file);
+        if ($bundle) {
+            if (!FileGenerator::folderExist($this->templateDir . DIRECTORY_SEPARATOR . $bundle)) {
+                mkdir($this->templateDir . DIRECTORY_SEPARATOR . $bundle, 0777, true);
+            }
+        }
 
-        $this->saveEntry($alias ?? Generator::getName($file), $basename);
+        $this->saveEntry($alias ?? ($bundle ? "$bundle:" . Generator::getName($file) : Generator::getName($file)), $basename);
         copy($file, Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $basename));
 
         return true;
+    }
+
+    public function saveBundle(object $bundleObject, string $format = 'json'): bool
+    {
+        $name = $bundleObject->name;
+
+        $contents = '';
+
+        switch ($format) {
+            case 'json':
+                $contents = json_encode($bundleObject);
+                break;
+            case 'yaml':
+                $contents = Yaml::dump($bundleObject);
+                break;
+            case 'neon':
+                $contents = Neon::encode($bundleObject, true);
+                break;
+            default:
+                throw new InvalidArgumentException('Unsupported format.');
+        }
+
+        $filename = "$name.bundle.$format";
+        
+        file_put_contents(Path::safe(Path::canonicalize($this->tempDir . DIRECTORY_SEPARATOR . $filename)), $contents);
+
+        if ($this->save($this->tempDir . DIRECTORY_SEPARATOR . $filename, $name)) {
+            unlink(Path::safe(Path::canonicalize($this->tempDir . DIRECTORY_SEPARATOR . $filename)));
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function getBasename(string $path): string
+    {
+        $filename = Path::canonicalize($path);
+        return basename($filename);
     }
 
     public function download(string $identifier, string $filename, string $content): mixed
@@ -71,6 +123,16 @@ class Storage
             return false;
 
         $filename = $this->removeEntry($name);
+
+        if ($this->isBundle($filename)) {
+            $parsed = Parser::decodeByExtension(Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $filename));
+            foreach ($parsed->templates as $template) {
+                $path = $this->removeEntry("$name:" . $template->name);
+                unlink(Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $path));
+            }
+            rmdir(Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $name));
+        }
+
         unlink(Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $filename));
 
         return true;
@@ -243,5 +305,10 @@ class Storage
         $this->saveStore($store);
 
         return $filename;
+    }
+
+    public function isBundle(string $filename): bool
+    {
+        return (bool) preg_match('/^.+?(\.bundle\.).+?$/', $filename);
     }
 }

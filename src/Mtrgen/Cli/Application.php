@@ -23,6 +23,7 @@ class Application
             new CreateUserCommand(),
             new UseCommand(),
             new ListTemplatesCommand(),
+            new SaveBundleCommand(),
         ]);
         $this->app->setDefaultCommand('generate');
     }

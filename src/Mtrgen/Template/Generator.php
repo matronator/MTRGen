@@ -15,6 +15,12 @@ use Nette\PhpGenerator\Property;
 
 class Generator
 {
+    public static function isBundle(string $path, ?string $contents = null): bool
+    {
+        $object = Parser::decodeByExtension($path, $contents);
+        return self::is($object->templates);
+    }
+
     public static function parse(string $filename, string $contents, array $arguments): FileObject
     {
         $object = Parser::decodeByExtension($filename, $contents);

@@ -23,4 +23,10 @@ class Filters
         $fc = mb_strtoupper(mb_substr($string, 0, 1, static::ENCODING), static::ENCODING);
         return $fc . mb_substr($string, 1, null, static::ENCODING);
     }
+
+    public static function lowerFirst(string $string): string
+    {
+        $fc = mb_strtolower(mb_substr($string, 0, 1, static::ENCODING), static::ENCODING);
+        return $fc . mb_substr($string, 1, null, static::ENCODING);
+    }
 }

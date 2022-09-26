@@ -39,11 +39,11 @@ vendor/bin/mtrgen login username password
 vendor/bin/mtrgen in username password
 ```
 
-This will log you in for 12 hours by default. You can change the duration by providing the `--duration` option (or `-d` for short) with the amount of hours you want to stay logged in. Provide 0 to stay logged in forever (not recommended).
+This will log you in for 24 hours by default. You can change the duration by providing the `--duration` option (or `-d` for short) with the amount of hours you want to stay logged in. Provide 0 to stay logged in forever (not recommended).
 
 ```bash
-vendor/bin/mtrgen login username password --duration=24
-vendor/bin/mtrgen login username password -d 24
+vendor/bin/mtrgen login username password --duration=48
+vendor/bin/mtrgen login username password -d 48
 # Or to never get logged out
 vendor/bin/mtrgen login username password --duration 0
 ```

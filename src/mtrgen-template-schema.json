@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "https://files.matronator.com/public/mtrgen/1.0.2/mtrgen-template-schema.json",
+  "$id": "https://www.mtrgen.com/storage/schemas/template/1.0.2/mtrgen-template-schema.json",
   "title": "MTRGen Template Files Schema",
   "description": "Schema for YAML/JSON templates for MTRGen PHP file generator.",
   "$ref": "#/definitions/Template",
