@@ -8,13 +8,14 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use Matronator\Mtrgen\Store\Path;
+use Matronator\Mtrgen\Store\Storage;
 use Matronator\Parsem\Parser;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Connection
 {
     public const PROD_URL = 'https://www.mtrgen.com/api';
-    public const DEBUG_URL = 'http://localhost:8000';
+    public const DEBUG_URL = 'http://localhost:8000/api';
 
     public string $apiUrl;
 
@@ -103,30 +104,52 @@ class Connection
         if (!$matched)
             return "Couldn't get filename from path '$path'.";
 
-
-        if (!Parser::isValid(Path::makeAbsolute($path), file_get_contents(Path::makeAbsolute($path))))
-            return '<fg=red>Invalid template.</>';
-
         $filename = $matches[2];
-        $template = Parser::decodeByExtension($filename);
+        $template = Parser::decodeByExtension($path, file_get_contents($path));
 
         $profileObject = $profile->loadProfile();
 
-        $body = [
-            'username' => $profileObject->username,
-            'token' => $profileObject->token,
-            'filename' => $filename,
-            'name' => strtolower($template->name),
-            'contents' => file_get_contents(Path::makeAbsolute($path)),
-        ];
+        $client = new Client();
+        $storage = new Storage;
+        if ($storage->isBundle($filename)) {
+            if (!Parser::isValidBundle($path, file_get_contents($path)))
+                return '<fg=red>Invalid bundle.</>';
+            
+            $templates = [];
+            foreach ($template->templates as $item) {
+                $templates[] = (object) [
+                    'name' => $item->name,
+                    'filename' => $item->path,
+                    'contents' => file_get_contents($storage->templateDir . DIRECTORY_SEPARATOR . $item->path),
+                ];
+            }
+            $body = [
+                'username' => $profileObject->username,
+                'token' => $profileObject->token,
+                'filename' => $filename,
+                'name' => strtolower($template->name),
+                'contents' => file_get_contents($path),
+                'templates' => $templates,
+            ];
+            $url = $this->apiUrl . '/bundles';
+        } else {
+            if (!Parser::isValid(Path::makeAbsolute($path), file_get_contents(Path::makeAbsolute($path))))
+                return '<fg=red>Invalid template.</>';
+            
+            $body = [
+                'username' => $profileObject->username,
+                'token' => $profileObject->token,
+                'filename' => $filename,
+                'name' => strtolower($template->name),
+                'contents' => file_get_contents(Path::makeAbsolute($path)),
+            ];
+            $url = $this->apiUrl . '/templates';
+        }
 
         if ($io) {
             $io->writeln('');
             $io->writeln('<fg=green>Publishing...</>');
         }
-
-        $client = new Client();
-        $url = $this->apiUrl . '/templates';
 
         $response = $client->request('POST', $url, ['form_params' => $body, 'progress' => function () use ($io) {
             if ($io) {

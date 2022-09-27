@@ -172,7 +172,7 @@ class Storage
      */
     public function getContent(string $name): string
     {
-        return file_get_contents(Path::safe($this->getFilename($name)));
+        return file_get_contents(Path::safe($this->getFullPath($name)));
     }
 
     /**
