@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace Matronator\Mtrgen\Cli;
 
 use Matronator\Mtrgen\FileGenerator;
+use Matronator\Mtrgen\Store\Path;
 use Matronator\Mtrgen\Store\Storage;
 use Matronator\Mtrgen\Template\Generator;
 use Matronator\Parsem\Parser;
 use SplFileObject;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -21,10 +25,8 @@ use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Validation;
 
 // #[AsCommand('generate:entity', 'Generates an Entity file', ['gen:entity'])]
-class GenerateCommand extends Command
+class GenerateCommand extends BaseGeneratorCommand
 {
-    private const CUSTOM_TEMPLATE_ANSWER = 'Custom template (enter path to the file)';
-
     protected static $defaultName = 'generate';
     protected static $defaultDescription = 'Generates a file from template. The template can be specified by name if it\'s saved in the local store, or with a path to the template file.';
 
@@ -38,8 +40,8 @@ class GenerateCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-        $storage = new Storage;
+        parent::execute($input, $output);
+
         $helper = $this->getHelper('question');
 
         $path = $input->getOption('path') ?? null;
@@ -48,20 +50,18 @@ class GenerateCommand extends Command
             $name = $input->getArgument('name') ?? null;
 
             if (!$name) {
-                $path = $this->askName($helper, $io, $storage, $input, $output);
+                $path = $this->askName($helper);
             } else {
-                $path = $storage->getFullPath($name);
+                $path = $this->storage->getFullPath($name);
                 if (!$path) {
-                    $io->text("<options=bold;fg=red>Template '$name' not found in the local store.</>");
+                    $this->io->text("<options=bold;fg=red>Template '$name' not found in the local store.</>");
                     return self::FAILURE;
                 }
             }
         }
 
-        $arguments = $this->getArguments($input->getArgument('args')) ?? null;
-
         if (!$path) {
-            $io->newLine();
+            $this->io->newLine();
             $pathQuestion = new Question('<comment><options=bold>Enter the path to your template file</>:</comment> ');
             $validatePath = Validation::createCallable(new Regex([
                 'pattern' => '/^(?![\/])(?![.+?\/]*[\/]$)[.+?\/]*/',
@@ -69,89 +69,48 @@ class GenerateCommand extends Command
             ]));
             $pathQuestion->setValidator($validatePath);
             $path = $helper->ask($input, $output, $pathQuestion);
-            $io->newLine();
-        }
-
-        if (!$arguments) {
-            $template = $this->getTemplate($path, $io);
-            if (!$template)
-                return Command::FAILURE;
-
-            $output->writeln('<fg=green>Template found!</>');
-            $output->writeln('Looking for template parameters...');
-
-            $args = Parser::getArguments($template);
-            if ($args !== []) {
-                $io->writeln('<fg=green>Template parameters found!</>');
-                $io->newLine();
-                $arguments = [];
-                foreach ($args as $arg) {
-                    $argQuestion = new Question("<comment><options=bold>Enter the value for parameter '$arg'</>:</comment> ");
-                    $arguments[$arg] = $helper->ask($input, $output, $argQuestion);
-                    $io->newLine();
-                }
-            }
+            $this->io->newLine();
         }
 
         $name = Generator::getName($path);
 
-        $output->writeln("Generating file from template <options=bold>{$name}</>...");
-        $io->newLine();
+        if (!$this->storage->isBundle($path)) {
+            $arguments = $this->getArguments($input->getArgument('args')) ?? null;
+            if (!$arguments) {
+                $arguments = $this->askArguments($helper, $path);
+            }
 
-        FileGenerator::writeFile(Generator::parseFile($path, $arguments));
+            $output->writeln("Generating file from template <options=bold>{$name}</>...");
+            $this->io->newLine();
+    
+            FileGenerator::writeFile(Generator::parseFile($path, $arguments));
+        } else {
+            $output->writeln("Generating files from bundle <options=bold>{$name}</>...");
+            $this->io->newLine();
+
+            $bundle = Parser::decodeByExtension($path);
+            $arguments = $this->getArguments($input->getArgument('args')) ?? null;
+            if (!$arguments) {
+                foreach ($bundle->templates as $temp) {
+                    $templatePath = Path::canonicalize($this->storage->templateDir . DIRECTORY_SEPARATOR . $temp->path);
+                    $arguments = $this->askArguments($helper, $templatePath);
+                    $templateName = $temp->name;
+                    $output->writeln("Generating file from template <options=bold>{$templateName}</>...");
+                    FileGenerator::writeFile(Generator::parseFile($templatePath, $arguments));
+                }
+            } else {
+                foreach ($bundle->templates as $temp) {
+                    $templatePath = Path::canonicalize($this->storage->templateDir . DIRECTORY_SEPARATOR . $temp->path);
+                    $templateName = $temp->name;
+                    $output->writeln("Generating file from template <options=bold>{$templateName}</>...");
+                    FileGenerator::writeFile(Generator::parseFile($templatePath, $arguments));
+                }
+            }
+        }
 
         $output->writeln('<fg=green>Done!</>');
-        $io->newLine();
+        $this->io->newLine();
 
         return self::SUCCESS;
-    }
-
-    private function askName(mixed $helper, SymfonyStyle $io, Storage $storage, InputInterface $input, OutputInterface $output): ?string
-    {
-        $templates = $storage->listAll();
-        $choices = [];
-        $choices[] = self::CUSTOM_TEMPLATE_ANSWER;
-        foreach ($templates as $name => $path) {
-            $choices[] = $name;
-        }
-
-        $io->newLine();
-        $nameQuestion = new ChoiceQuestion('<comment><options=bold>Select the template to generate</>:</comment> ', $choices);
-        $name = $helper->ask($input, $output, $nameQuestion);
-        $io->newLine();
-
-        if ($name !== self::CUSTOM_TEMPLATE_ANSWER) {
-            $path = $storage->getFullPath($name);
-            return $path;
-        }
-
-        return null;
-    }
-
-    private function getArguments(array $args): array
-    {
-        $arguments = [];
-        foreach ($args as $arg) {
-            $exploded = explode('=', $arg);
-            $arguments[$exploded[0]] = $exploded[1];
-        }
-
-        return $arguments;
-    }
-
-    private function getTemplate(string $path, SymfonyStyle $io): ?string
-    {
-        if (!file_exists($path)) {
-            $io->error("File '$path' doesn't exists.");
-            return null;
-        }
-        $file = new SplFileObject($path);
-
-        if (!in_array($file->getExtension(), ['yml', 'yaml', 'json', 'neon'])) {
-            $io->error("File '$path' isn't of a valid type (supported extensions are: yml, yaml, json, neon).");
-            return null;
-        }
-
-        return $file->fread($file->getSize());
     }
 }

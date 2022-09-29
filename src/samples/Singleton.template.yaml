@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://www.mtrgen.com/storage/schemas/template/latest/mtrgen-template-schema.json
+name: singleton
+filename: <% name|ucfirst %>
+path: app/<% path %>
+file:
+  namespace:
+    name: <% namespace %>
+    class:
+      name: <% name|ucfirst %>
+      props:
+        - name: instance
+          type: <% namespace %>\<% name|ucfirst %>
+          value: null
+          nullable: true
+          static: true
+          visibility: private
+      methods:
+        - name: getInstance
+          static: true
+          return: <% namespace %>\<% name|ucfirst %>
+          body:
+            - if (self::$instance === null) {
+            - self::$instance = new self();
+            - '}'
+            - ''
+            - return self::$instance;
+          visibility: public
+        - name: __construct
+          visibility: private
+        - name: __clone
+          visibility: private
+        - name: __wakeup
+          visibility: public
+          body:
+            - 'throw new Exception("Cannot unserialize singleton");'

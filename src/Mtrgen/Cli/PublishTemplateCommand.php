@@ -28,6 +28,17 @@ class PublishTemplateCommand extends Command
     protected static $defaultName = 'publish';
     protected static $defaultDescription = 'Publish template to the online template repository.';
 
+    public Storage $storage;
+    public Connection $connection;
+
+    public function __construct()
+    {
+        $this->storage = new Storage;
+        $this->connection = new Connection;
+
+        parent::__construct();
+    }
+
     public function configure(): void
     {
         $this->setAliases(['pub']);
@@ -43,38 +54,19 @@ class PublishTemplateCommand extends Command
         $path = $input->getOption('path') ?? null;
 
         $helper = $this->getHelper('question');
-        $storage = new Storage;
         if ($name) {
-            $template = $storage->load($name);
+            $template = $this->storage->load($name);
             if ($template) {
                 $path = $template->filename;
     
-                $connection = new Connection;
-                $response = $connection->postTemplate(Path::canonicalize($storage->templateDir . DIRECTORY_SEPARATOR . $path), $output);
-                if (is_string($response)) {
-                    $io->text($response);
-                    $io->newLine();
-    
-                    return self::FAILURE;
-                }
-    
-                if (is_object($response)) {
-                    if ($response->status !== 'success') {
-                        $io->text('<fg=red>'.$response->status.'</>');
-                        $io->error($response->message);
-                        return self::FAILURE;
-                    }
-                    $profile = (new Profile)->loadProfile();
-                    $fullname = strtolower($profile->username . '/' . $name);
-                    $output->writeln("<fg=green>Template '$name' published as '$fullname'!</>");
-                    $io->newLine();
-    
-                    return self::SUCCESS;
-                }
+                $response = $this->connection->postTemplate(Path::canonicalize($this->storage->templateDir . DIRECTORY_SEPARATOR . $path), $output);
+                $profile = (new Profile)->loadProfile();
+                $fullname = strtolower($profile->username . '/' . $name);
+                return $this->checkResponse($io, $response, $output, "<fg=green>Template '$name' published as '$fullname'!</>");
             }
         }
         if (!$path) {
-            $path = $this->askName($helper, $io, $storage, $input, $output);
+            $path = $this->askName($helper, $io, $input, $output);
         }
         if (!$path) {
             $io->newLine();
@@ -88,8 +80,20 @@ class PublishTemplateCommand extends Command
             $io->newLine();
         }
 
-        $connection = new Connection;
-        $response = $connection->postTemplate($path, $output);
+        $response = $this->connection->postTemplate($path, $output);
+        $name = Generator::getName($path);
+        $profile = (new Profile)->loadProfile();
+        $fullname = strtolower($profile->username . '/' . $name);
+        return $this->checkResponse($io, $response, $output, "<fg=green>Template '$name' published as '$fullname'!</>");
+    }
+
+    /**
+     * @param SymfonyStyle $io
+     * @param mixed $response
+     * @return integer
+     */
+    private function checkResponse(SymfonyStyle $io, mixed $response, OutputInterface $output, string $message): int
+    {
         if (is_string($response)) {
             $io->text($response);
             $io->newLine();
@@ -103,22 +107,19 @@ class PublishTemplateCommand extends Command
                 $io->error($response->message);
                 return self::FAILURE;
             }
-            $name = Generator::getName($path);
-            $profile = (new Profile)->loadProfile();
-            $fullname = strtolower($profile->username . '/' . $name);
-            $output->writeln("<fg=green>Template '$name' published as '$fullname'!</>");
+            $output->writeln($message);
             $io->newLine();
 
             return self::SUCCESS;
         }
 
-        $io->error("File '$path' doesn't exists");
-        return self::FAILURE;
+        $io->error($response);
+        return self::INVALID;
     }
 
-    private function askName(mixed $helper, SymfonyStyle $io, Storage $storage, InputInterface $input, OutputInterface $output): ?string
+    private function askName(mixed $helper, SymfonyStyle $io, InputInterface $input, OutputInterface $output): ?string
     {
-        $templates = $storage->listAll();
+        $templates = $this->storage->listAll();
         $choices = [];
         $choices[] = self::CUSTOM_TEMPLATE_ANSWER;
         foreach ($templates as $name => $path) {
@@ -130,7 +131,7 @@ class PublishTemplateCommand extends Command
         $name = $helper->ask($input, $output, $nameQuestion);
 
         if ($name !== self::CUSTOM_TEMPLATE_ANSWER) {
-            $path = $storage->getFullPath($name);
+            $path = $this->storage->getFullPath($name);
             return $path;
         }
 

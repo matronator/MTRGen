@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Matronator\Mtrgen\Cli;
 
 use Matronator\Mtrgen\Registry\Connection;
-use Matronator\Mtrgen\Registry\Profile;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

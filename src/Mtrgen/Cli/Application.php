@@ -14,7 +14,7 @@ class Application
     {
         $this->app = new ConsoleApplication('MTRGen', '1.0.0');
         $this->app->addCommands([
-            new GenerateCommand(),
+            new GenerateCommand($this->app),
             new SaveTemplateCommand(),
             new RemoveTemplateCommand(),
             new PublishTemplateCommand(),

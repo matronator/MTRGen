@@ -254,6 +254,9 @@
         "nullable": {
           "type": "boolean"
         },
+        "static": {
+          "type": "boolean"
+        },
         "params": {
           "type": "array",
           "items": {

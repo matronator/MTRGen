@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Validation;
 
 // #[AsCommand('generate:entity', 'Generates an Entity file', ['gen:entity'])]
-class UseCommand extends Command
+class UseCommand extends BaseGeneratorCommand
 {
     protected static $defaultName = 'use';
     protected static $defaultDescription = 'Generates a file using a template from the online registry.';
@@ -31,12 +31,12 @@ class UseCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        parent::execute($input, $output);
+        
         $helper = $this->getHelper('question');
-
         $identifier = $input->getArgument('identifier') ?? null;
         if (!$identifier) {
-            $io->newLine();
+            $this->io->newLine();
             $nameQuestion = new Question('<comment><options=bold>Enter the template identifier (vendor/name)</>:</comment> ');
             $validateName = Validation::createCallable(new Regex([
                 'pattern' => '/^[a-zA-Z0-9_-]+?\/[a-zA-Z0-9_-]+?$/',
@@ -44,54 +44,38 @@ class UseCommand extends Command
             ]));
             $nameQuestion->setValidator($validateName);
             $identifier = $helper->ask($input, $output, $nameQuestion);
-            $io->newLine();
+            $this->io->newLine();
         }
 
-        $connection = new Connection;
+        $template = $this->connection->getTemplate($identifier);
         $arguments = $this->getArguments($input->getArgument('args')) ?? null;
-        if (!$arguments) {
-            $template = $connection->getTemplate($identifier);
-            $contents = $template->contents;
-            if (!$template || !$contents) {
-                $io->error('Template not found.');
-                return Command::FAILURE;
+        if (!$this->storage->isBundle($template->filename)) {
+            if (!$arguments) {
+                $contents = $template->contents;
+                $arguments = $this->askArguments($helper, null, $identifier, $template);
             }
-
-            $output->writeln('<fg=green>Template found!</>');
-            $output->writeln('Looking for template parameters...');
-
-            $args = Parser::getArguments($contents);
-            if ($args !== []) {
-                $io->writeln('<fg=green>Template parameters found!</>');
-                $io->newLine();
-                $arguments = [];
-                foreach ($args as $arg) {
-                    $argQuestion = new Question("<comment><options=bold>Enter the value for parameter '$arg'</>:</comment> ");
-                    $arguments[$arg] = $helper->ask($input, $output, $argQuestion);
-                    $io->newLine();
-                }
+    
+            $output->writeln("Generating file from template <options=bold>$identifier</>...");
+            $this->io->newLine();
+    
+            FileGenerator::writeFile(Generator::parse($template->filename, $contents, $arguments));
+        } else {
+            $output->writeln("Generating files from bundle <options=bold>$identifier</>...");
+            $bundle = Parser::decodeByExtension($template->filename, $template->contents);
+            foreach ($bundle->templates as $temp) {
+                $downloaded = $this->connection->getTemplateFromBundle($identifier, $temp->name);
+                $templateName = $temp->name;
+                $this->io->title("<fg=yellow>Template <options=bold>{$templateName}</>:</>");
+                $arguments = $this->askArguments($helper, null, $identifier, $template, $downloaded->contents);
+                $output->writeln("Generating file from template <options=bold>{$templateName}</>...");
+                FileGenerator::writeFile(Generator::parse($temp->path, $downloaded->contents, $arguments));
+                $this->io->newLine();
             }
         }
-
-        $output->writeln("Generating file from template <options=bold>$identifier</>...");
-        $io->newLine();
-
-        FileGenerator::writeFile(Generator::parse($template->filename, $contents, $arguments));
 
         $output->writeln('<fg=green>Done!</>');
-        $io->newLine();
+        $this->io->newLine();
 
         return self::SUCCESS;
-    }
-
-    private function getArguments(array $args): array
-    {
-        $arguments = [];
-        foreach ($args as $arg) {
-            $exploded = explode('=', $arg);
-            $arguments[$exploded[0]] = $exploded[1];
-        }
-
-        return $arguments;
     }
 }

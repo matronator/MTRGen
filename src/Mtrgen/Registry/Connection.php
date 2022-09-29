@@ -87,6 +87,48 @@ class Connection
                 $extension = 'neon';
         }
 
+        $typeUrl = $this->apiUrl . "/templates/$vendor/$name/type";
+        $typeResponse = $client->get($typeUrl);
+
+        $type = json_decode($typeResponse->getBody()->getContents());
+
+        return (object) [
+            'filename' => "$name.$type.$extension",
+            'contents' => $response->getBody()->getContents(),
+            'type' => $contentType,
+        ];
+    }
+
+    public function getTemplateFromBundle(string $identifier, string $templateName): object
+    {
+        [$vendor, $name] = explode('/', $identifier);
+
+        $url = $this->apiUrl . "/bundles/$vendor/$name/$templateName/get";
+
+        $client = new Client();
+        $response = $client->get($url, [
+            'headers' => [
+                'X-Requested-By' => 'cli',
+            ],
+        ]);
+        $contentType = $response->getHeaderLine('Content-Type');
+
+        switch ($contentType) {
+            case 'application/json':
+            case 'text/json':
+                $extension = 'json';
+            case 'text/x-yaml':
+            case 'application/x-yaml':
+            case 'text/yaml':
+                $extension = 'yaml';
+            case 'application/x-neon':
+            case 'text/x-neon':
+            case 'text/neon':
+                $extension = 'neon';
+            default:
+                $extension = 'neon';
+        }
+
         return (object) [
             'filename' => "$name.template.$extension",
             'contents' => $response->getBody()->getContents(),
