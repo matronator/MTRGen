@@ -342,16 +342,16 @@
         },
         {
             "name": "matronator/parsem",
-            "version": "v1.0.6",
+            "version": "v1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matronator/parsem.git",
-                "reference": "515aa334aa755139b7585af8b4cfb7eba66bcea2"
+                "reference": "5210805655e4825143b3ac76d154892f215db4e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matronator/parsem/zipball/515aa334aa755139b7585af8b4cfb7eba66bcea2",
-                "reference": "515aa334aa755139b7585af8b4cfb7eba66bcea2",
+                "url": "https://api.github.com/repos/matronator/parsem/zipball/5210805655e4825143b3ac76d154892f215db4e8",
+                "reference": "5210805655e4825143b3ac76d154892f215db4e8",
                 "shasum": ""
             },
             "require": {
@@ -395,7 +395,7 @@
             ],
             "support": {
                 "issues": "https://github.com/matronator/parsem/issues",
-                "source": "https://github.com/matronator/parsem/tree/v1.0.6"
+                "source": "https://github.com/matronator/parsem/tree/v1.0.7"
             },
             "funding": [
                 {
@@ -415,7 +415,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2022-09-26T20:04:10+00:00"
+            "time": "2022-10-01T23:45:39+00:00"
         },
         {
             "name": "nette/finder",
