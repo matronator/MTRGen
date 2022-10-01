@@ -69,6 +69,10 @@ vendor/bin/mtrgen remove TemplateName
 vendor/bin/mtrgen r TemplateName
 ```
 
+## Acknowledgement
+
+This project would not be possible without [Nette](https://nette.org)'s [`php-generator`](https://github.com/nette/php-generator) package, which is used for the final code generation itself to output the finished PHP file.
+
 ## License
 
 MIT License
