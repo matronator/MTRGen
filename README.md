@@ -33,6 +33,10 @@ composer self-update
 
 If you can't or don't want to update composer, use version `"^1.0"` of this package as that doesn't depend on Composer runtime API 2.2.
 
+## Documentation
+
+[Read the full documentation here.](https://matronator.github.io/MTRGen/)
+
 ## Quickstart
 
 You run the script from terminal using this command:
