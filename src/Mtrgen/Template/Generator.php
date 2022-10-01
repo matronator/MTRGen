@@ -42,6 +42,8 @@ class Generator
 
         $file = self::generate($parsed->file, $arguments);
 
+        if (isset($parsed->autoImport) && $parsed->autoImport === true) $file = self::autoImportTypes($file);
+
         return new FileObject($outDir, $filename, $file);
     }
 
@@ -150,7 +152,7 @@ class Generator
         }
         if (self::is($object->props)) {
             foreach ($object->props as $prop) {
-                $property = self::property($prop, $args);
+                $property = self::property($prop, $args, $class);
                 $class->addMember($property);
             }
         }
@@ -196,7 +198,7 @@ class Generator
         return $namespace;
     }
 
-    private static function property(object $prop, array $args): Property
+    private static function property(object $prop, array $args, ?ClassType $class = null): Property
     {
         $property = new Property(Parser::parseString($prop->name, $args));
 
@@ -211,8 +213,43 @@ class Generator
                 $property->addComment(Parser::parseString($comment, $args));
             }
         }
+        if ($class) {
+            if (self::is($prop->getter) && $prop->getter) {
+                $getter = self::getter($property->getName(), $property->getType());
+                $class->addMember($getter);
+            }
+            if (self::is($prop->setter) && $prop->setter) {
+                $setter = self::setter($property->getName(), $property->getType());
+                $class->addMember($setter);
+            }
+        }
 
         return $property;
+    }
+
+    private static function getter(string $name, string $type): Method
+    {
+        $getter = new Method('get' . ucfirst($name));
+        $getter->addComment("@return $type");
+
+        $getter->setReturnType($type);
+        $getter->addBody("return \$this->$name;");
+
+        return $getter;
+    }
+
+    private static function setter(string $name, string $type): Method
+    {
+        $setter = new Method('set' . ucfirst($name));
+        $setter->addComment("@param $type \$$name");
+
+        $param = $setter->addParameter($name);
+        $param->setType($type);
+
+        $setter->setReturnType('void');
+        $setter->addBody("\$this->$name = \$$name;");
+
+        return $setter;
     }
 
     private static function method(object $object, array $args): Method
@@ -258,6 +295,29 @@ class Generator
         }
 
         return $method;
+    }
+
+    private static function autoImportTypes(PhpFile &$file): PhpFile
+    {
+        foreach ($file->getNamespaces() as $namespace) {
+            $classnames = [];
+            foreach ($namespace->getClasses() as $class) {
+                $classnames[] = $namespace->resolveName($class->getName());
+                $types = [];
+                foreach ($class->getMethods() as $method) {
+                    $types[] = $method->getReturnType();
+                    array_map(function ($param) use (&$types) { $types[] = $param->getType(); }, $method->getParameters());
+                }
+                array_map(function ($param) use (&$types) { $types[] = $param->getType(); }, $class->getProperties());
+                foreach (array_filter($types, function($item) use ($classnames) {
+                    return !in_array($item, ['string', 'int', 'bool', 'float', 'null', 'false', 'true', 'array', 'object', 'void', false, null]) && !in_array($item, $classnames);
+                }) as $type) {
+                    $namespace->addUse((string) $type);
+                }
+            }
+        }
+
+        return $file;
     }
 
     public static function is(mixed &$subject): bool

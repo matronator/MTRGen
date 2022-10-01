@@ -32,4 +32,4 @@ file:
         - name: __wakeup
           visibility: public
           body:
-            - 'throw new Exception("Cannot unserialize singleton");'
+            - 'throw new \Exception("Cannot unserialize singleton");'
