@@ -38,7 +38,7 @@ You can optionally provide filter to a variable by placing the pipe symbol `|` r
 
 The filter can be any PHP function with the variable used as the function's argument.
 
-{: .note-title .code-break }
+{: .info-title .code-break }
 > Example
 >
 > If we have `<% foo|strtoupper %>` in the template and we provide an argument `['foo' => 'hello world']`, the final (parsed) output will be this: `HELLO WORLD`.
@@ -47,7 +47,7 @@ Filters can also have additional arguments apart from the variable itself. To pa
 
 The first argument will always the variable on which we're declaring the filter, with any other arguments passed after that.
 
-{: .note-title }
+{: .info-title }
 > Example
 >
 > If we have `<% foo|substr:1,3 %>` and provide an argument `['foo' => 'abcdef']`, the filter will get called like this using the arguments provided: `substr('abcdef', 1, 3)`. The final parsed output will thus be this: `bcd`.

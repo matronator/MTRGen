@@ -21,9 +21,9 @@ You need an account to be able to publish your template online, so the first thi
 To create an account using the CLI tool, we'll be using the `signup` command. It takes two arguments - username and a password.
 
 {: .caution }
-> The order of arguments matter. Username has to be first and password second. Be careful not to switch them up and create an account with your password for a username.
+> The order of arguments matter. Username has to be first and password second. Be careful not to switch them up and create an account with your password for username.
 
-#### Using the `signup` command
+#### Using the `signup` and `login` commands
 
 ```bash
 vendor/bin/mtrgen signup username password
@@ -45,7 +45,7 @@ This will log you in for 24 hours by default. You can change the duration by pro
 vendor/bin/mtrgen login username password --duration=48
 vendor/bin/mtrgen login username password -d 48
 # Or to never get logged out
-vendor/bin/mtrgen login username password --duration 0
+vendor/bin/mtrgen login username password -d 0
 ```
 
 Now that your account is created and you've successfully logged in, it's time you finally publish your template.
@@ -55,12 +55,22 @@ Now that your account is created and you've successfully logged in, it's time yo
 Publishing a template is as simple as just running a single command:
 
 ```bash
-vendor/bin/mtrgen publish path/to/your/template.json
+vendor/bin/mtrgen publish --path=path/to/your/template.json
 # Or a shorter alias
-vendor/bin/mtrgen pub path/to/your/template.json
+vendor/bin/mtrgen pub -p path/to/your/template.json
 ```
 
-The `publish` command takes a single argument and that's the path to your template relative to your project root (usually the same place you're running the command from). The identifier for the template will be constructed from your username and the `name` field inside your template file.
+Alternatively if you want to publish a template you already have saved in your local store, just provide the template name instead of the `--path` option, like this:
 
-{: .note }
-> So if your username is `hunter2` and you have set the `name` inside your template to be `my-cool-template`, the identifier it would be available under to others will be `hunter2/my-cool-template`.
+```bash
+vendor/bin/mtrgen publish my-template
+```
+
+If you don't provide any arguments/options (name nor path), the program will show you a list of all the templates you have saved in your local store and you can choose a template to publish from that list.
+
+After you publish the template, the identifier for the template will be constructed from your username and the `name` field inside your template file.
+
+{: .note-title }
+> Example
+> 
+> So if your username is `hunter2` and you have set the `name` inside your template to be `my-cool-template`, the identifier under which it will be available to others after publishing will be `hunter2/my-cool-template`.
