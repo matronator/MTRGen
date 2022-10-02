@@ -1,7 +1,7 @@
 ---
 ---
 
-p > code:not(.code-break) {
+p:not(.code-break) > code {
     word-break: keep-all;
     white-space: pre;
 }
