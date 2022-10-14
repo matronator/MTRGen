@@ -1,7 +1,8 @@
-# yaml-language-server: $schema=https://www.mtrgen.com/storage/schemas/template/latest/mtrgen-template-schema.json
-name: singleton
+# yaml-language-server: $schema=https://www.mtrgen.com/storage/schemas/template/1.0.3/mtrgen-template-schema.json
+name: test
 filename: <% name|ucfirst %>
 path: app/<% path %>
+autoImport: true
 file:
   namespace:
     name: <% namespace %>
@@ -14,16 +15,27 @@ file:
           nullable: true
           static: true
           visibility: private
+        - name: myProperty
+          type: string
+          visibility: private
+          getter: true
+          setter: true
+        - name: other
+          type: MyType\Kamo
+          visibility: private
+          getter: true
+        - name: anotherOne
+          type: App\More\Coje
       methods:
         - name: getInstance
           static: true
           return: <% namespace %>\<% name|ucfirst %>
           body:
-            - 'if (self::$instance === null) {'
-            - 'self::$instance = new self();'
+            - if (self::$instance === null) {
+            - self::$instance = new self();
             - '}'
             - ''
-            - 'return self::$instance;'
+            - return self::$instance;
           visibility: public
         - name: __construct
           visibility: private

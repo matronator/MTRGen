@@ -24,6 +24,7 @@ class Application
             new UseCommand(),
             new ListTemplatesCommand(),
             new SaveBundleCommand(),
+            new ValidateCommand(),
         ]);
         $this->app->setDefaultCommand('generate');
     }

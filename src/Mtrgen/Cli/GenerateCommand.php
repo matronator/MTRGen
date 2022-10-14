@@ -61,15 +61,7 @@ class GenerateCommand extends BaseGeneratorCommand
         }
 
         if (!$path) {
-            $this->io->newLine();
-            $pathQuestion = new Question('<comment><options=bold>Enter the path to your template file</>:</comment> ');
-            $validatePath = Validation::createCallable(new Regex([
-                'pattern' => '/^(?![\/])(?![.+?\/]*[\/]$)[.+?\/]*/',
-                'message' => 'Value must be a valid path without leading or trailing slashes.',
-            ]));
-            $pathQuestion->setValidator($validatePath);
-            $path = $helper->ask($input, $output, $pathQuestion);
-            $this->io->newLine();
+            $path = $this->askPath($helper);
         }
 
         $name = Generator::getName($path);

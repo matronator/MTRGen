@@ -21,10 +21,8 @@ use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Validation;
 
 // #[AsCommand('generate:entity', 'Generates an Entity file', ['gen:entity'])]
-class PublishTemplateCommand extends Command
+class PublishTemplateCommand extends BaseGeneratorCommand
 {
-    private const CUSTOM_TEMPLATE_ANSWER = 'Custom template (enter path to the file)';
-
     protected static $defaultName = 'publish';
     protected static $defaultDescription = 'Publish template to the online template repository.';
 
@@ -48,7 +46,7 @@ class PublishTemplateCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        parent::execute($input, $output);
 
         $name = $input->getArgument('name') ?? null;
         $path = $input->getOption('path') ?? null;
@@ -62,79 +60,51 @@ class PublishTemplateCommand extends Command
                 $response = $this->connection->postTemplate(Path::canonicalize($this->storage->templateDir . DIRECTORY_SEPARATOR . $path), $output);
                 $profile = (new Profile)->loadProfile();
                 $fullname = strtolower($profile->username . '/' . $name);
-                return $this->checkResponse($io, $response, $output, "<fg=green>Template '$name' published as '$fullname'!</>");
+                return $this->checkResponse($response, $output, "<fg=green>Template '$name' published as '$fullname'!</>");
             }
         }
         if (!$path) {
-            $path = $this->askName($helper, $io, $input, $output);
+            $path = $this->askName($helper);
         }
         if (!$path) {
-            $io->newLine();
-            $pathQuestion = new Question('<comment><options=bold>Enter the path to your template</>:</comment> ');
-            $validatePath = Validation::createCallable(new Regex([
-                'pattern' => '/^(?![\/])(?![.+?\/]*[\/]$)[.+?\/]*/',
-                'message' => 'Value must be a valid path without leading or trailing slashes.',
-            ]));
-            $pathQuestion->setValidator($validatePath);
-            $path = $helper->ask($input, $output, $pathQuestion);
-            $io->newLine();
+            $path = $this->askPath($helper);
         }
 
         $response = $this->connection->postTemplate($path, $output);
         $name = Generator::getName($path);
         $profile = (new Profile)->loadProfile();
         $fullname = strtolower($profile->username . '/' . $name);
-        return $this->checkResponse($io, $response, $output, "<fg=green>Template '$name' published as '$fullname'!</>");
+        return $this->checkResponse($response, $output, "<fg=green>Template '$name' published as '$fullname'!</>");
     }
 
     /**
-     * @param SymfonyStyle $io
      * @param mixed $response
+     * @param OutputInterface $output
+     * @param string $name
      * @return integer
      */
-    private function checkResponse(SymfonyStyle $io, mixed $response, OutputInterface $output, string $message): int
+    private function checkResponse(mixed $response, OutputInterface $output, string $message): int
     {
         if (is_string($response)) {
-            $io->text($response);
-            $io->newLine();
+            $this->io->text($response);
+            $this->io->newLine();
 
             return self::FAILURE;
         }
 
         if (is_object($response)) {
             if ($response->status !== 'success') {
-                $io->text('<fg=red>'.$response->status.'</>');
-                $io->error($response->message);
+                $this->io->text('<fg=red>'.$response->status.'</>');
+                $this->io->error($response->message);
                 return self::FAILURE;
             }
             $output->writeln($message);
-            $io->newLine();
+            $this->io->newLine();
 
             return self::SUCCESS;
         }
 
-        $io->error($response);
+        $this->io->error($response);
         return self::INVALID;
-    }
-
-    private function askName(mixed $helper, SymfonyStyle $io, InputInterface $input, OutputInterface $output): ?string
-    {
-        $templates = $this->storage->listAll();
-        $choices = [];
-        $choices[] = self::CUSTOM_TEMPLATE_ANSWER;
-        foreach ($templates as $name => $path) {
-            $choices[] = $name;
-        }
-
-        $io->newLine();
-        $nameQuestion = new ChoiceQuestion('<comment><options=bold>Select the template to generate</>:</comment> ', $choices);
-        $name = $helper->ask($input, $output, $nameQuestion);
-
-        if ($name !== self::CUSTOM_TEMPLATE_ANSWER) {
-            $path = $this->storage->getFullPath($name);
-            return $path;
-        }
-
-        return null;
     }
 }

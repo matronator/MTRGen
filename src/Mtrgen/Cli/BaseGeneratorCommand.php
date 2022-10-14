@@ -14,6 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Validation;
 
 abstract class BaseGeneratorCommand extends Command
 {
@@ -60,6 +62,21 @@ abstract class BaseGeneratorCommand extends Command
         }
 
         return null;
+    }
+
+    protected function askPath(mixed $helper): string
+    {
+        $this->io->newLine();
+        $pathQuestion = new Question('<comment><options=bold>Enter the path to your template file</>:</comment> ');
+        $validatePath = Validation::createCallable(new Regex([
+            'pattern' => '/^(?![\/])(?![.+?\/]*[\/]$)[.+?\/]*/',
+            'message' => 'Value must be a valid path without leading or trailing slashes.',
+        ]));
+        $pathQuestion->setValidator($validatePath);
+        $path = $helper->ask($this->input, $this->output, $pathQuestion);
+        $this->io->newLine();
+
+        return $path;
     }
 
     protected function getArguments(array $args): array

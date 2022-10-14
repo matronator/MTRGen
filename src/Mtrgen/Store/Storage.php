@@ -98,6 +98,12 @@ class Storage
         return false;
     }
 
+    /**
+     * Returns the basename of a file
+     *
+     * @param string $path
+     * @return string
+     */
     public static function getBasename(string $path): string
     {
         $filename = Path::canonicalize($path);
@@ -195,7 +201,7 @@ class Storage
     }
 
     /**
-     * Returns the filename of the template
+     * Returns the filename of the template from local store
      * @return string|null
      * @param string $name Name under which the template is stored
      */
