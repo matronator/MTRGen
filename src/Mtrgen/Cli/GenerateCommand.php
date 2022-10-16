@@ -6,23 +6,12 @@ namespace Matronator\Mtrgen\Cli;
 
 use Matronator\Mtrgen\FileGenerator;
 use Matronator\Mtrgen\Store\Path;
-use Matronator\Mtrgen\Store\Storage;
 use Matronator\Mtrgen\Template\Generator;
 use Matronator\Parsem\Parser;
-use SplFileObject;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Validator\Constraints\Regex;
-use Symfony\Component\Validator\Validation;
 
 // #[AsCommand('generate:entity', 'Generates an Entity file', ['gen:entity'])]
 class GenerateCommand extends BaseGeneratorCommand
