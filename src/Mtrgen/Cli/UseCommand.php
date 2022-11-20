@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Validation;
 
@@ -33,6 +33,7 @@ class UseCommand extends BaseGeneratorCommand
     {
         parent::execute($input, $output);
         
+        /** @var SymfonyQuestionHelper $helper */
         $helper = $this->getHelper('question');
         $identifier = $input->getArgument('identifier') ?? null;
         if (!$identifier) {

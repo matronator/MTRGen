@@ -7,6 +7,7 @@ namespace Matronator\Mtrgen\Cli;
 use Matronator\Mtrgen\Store\Storage;
 use Matronator\Mtrgen\Template\Generator;
 use Matronator\Parsem\Parser;
+use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -45,6 +46,7 @@ class SaveBundleCommand extends Command
             return self::INVALID;
         }
 
+        /** @var SymfonyQuestionHelper $helper */
         $helper = $this->getHelper('question');
         if (!$name) {
             $io->newLine();

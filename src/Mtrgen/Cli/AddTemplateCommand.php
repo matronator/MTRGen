@@ -8,6 +8,7 @@ use Matronator\Mtrgen\Registry\Connection;
 use Matronator\Mtrgen\Store\Storage;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
@@ -32,6 +33,7 @@ class AddTemplateCommand extends Command
 
         $identifier = $input->getArgument('identifier') ?? null;
 
+        /** @var SymfonyQuestionHelper $helper */
         $helper = $this->getHelper('question');
         if (!$identifier) {
             $io->newLine();

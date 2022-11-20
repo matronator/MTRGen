@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Validator\Constraints\Regex;
@@ -38,6 +39,7 @@ class LoginCommand extends Command
         $password = $input->getArgument('password') ?? null;
         $duration = (int) ($input->getOption('duration') ?? 24);
 
+        /** @var SymfonyQuestionHelper $helper */
         $helper = $this->getHelper('question');
         if (!$username) {
             $io->newLine();

@@ -15,12 +15,27 @@ use Nette\PhpGenerator\Property;
 
 class Generator
 {
+    /**
+     * Checks if template is bundle
+     *
+     * @param string $path
+     * @param string|null $contents
+     * @return boolean
+     */
     public static function isBundle(string $path, ?string $contents = null): bool
     {
         $object = Parser::decodeByExtension($path, $contents);
         return self::is($object->templates);
     }
 
+    /**
+     * Parse and generate a FileObject from string content and a filename
+     *
+     * @param string $filename
+     * @param string $contents
+     * @param array $arguments
+     * @return FileObject
+     */
     public static function parse(string $filename, string $contents, array $arguments): FileObject
     {
         $object = Parser::decodeByExtension($filename, $contents);
@@ -28,6 +43,13 @@ class Generator
         return self::generateFile($object, $arguments);
     }
 
+    /**
+     * Parse and generate a FileObject from a file
+     *
+     * @param string $path - Path to the file
+     * @param array $arguments
+     * @return FileObject
+     */
     public static function parseFile(string $path, array $arguments): FileObject
     {
         $object = Parser::decodeByExtension($path);
@@ -47,9 +69,9 @@ class Generator
         return new FileObject($outDir, $filename, $file);
     }
 
-    public static function getName(string $path)
+    public static function getName(string $path, ?string $contents = null)
     {
-        $object = Parser::decodeByExtension($path);
+        $object = Parser::decodeByExtension($path, $contents);
 
         return $object->name;
     }

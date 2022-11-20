@@ -6,6 +6,7 @@ namespace Matronator\Mtrgen\Cli;
 
 use Matronator\Mtrgen\Registry\Connection;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,6 +35,7 @@ class CreateUserCommand extends Command
         $username = $input->getArgument('username') ?? null;
         $password = $input->getArgument('password') ?? null;
 
+        /** @var SymfonyQuestionHelper $helper */
         $helper = $this->getHelper('question');
         if (!$username) {
             $io->newLine();
