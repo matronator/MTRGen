@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-06/schema#",
-  "$id": "https://www.mtrgen.com/storage/schemas/template/1.0.3/mtrgen-template-schema.json",
+  "$id": "https://www.mtrgen.com/storage/schemas/template/1.0.4/mtrgen-template-schema.json",
   "title": "MTRGen Template Files Schema",
   "description": "Schema for YAML/JSON templates for MTRGen PHP file generator.",
   "$ref": "#/definitions/Template",
@@ -227,6 +227,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "visibility": {
+          "enum": ["public", "private", "protected"]
         }
       },
       "required": [
