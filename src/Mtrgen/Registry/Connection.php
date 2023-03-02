@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Matronator\Mtrgen\Registry;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use Matronator\Mtrgen\Store\Path;
 use Matronator\Mtrgen\Store\Storage;
@@ -167,7 +166,6 @@ class Connection
             }
             $body = [
                 'username' => $profileObject->username,
-                'token' => $profileObject->token,
                 'filename' => $filename,
                 'name' => strtolower($template->name),
                 'contents' => file_get_contents($path),
@@ -180,7 +178,6 @@ class Connection
             
             $body = [
                 'username' => $profileObject->username,
-                'token' => $profileObject->token,
                 'filename' => $filename,
                 'name' => strtolower($template->name),
                 'contents' => file_get_contents(Path::makeAbsolute($path)),
@@ -197,7 +194,9 @@ class Connection
             if ($io) {
                 $io->write('.');
             }
-        }]);
+        }, 'headers' => [
+            'Authorization' => 'Bearer ' . $profileObject->token,
+        ]]);
 
         if ($io) $io->writeln('');
 

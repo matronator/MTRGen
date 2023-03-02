@@ -619,16 +619,16 @@
         },
         {
             "name": "nette/safe-stream",
-            "version": "v2.5.0",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/safe-stream.git",
-                "reference": "8bbbeda8415b8352642d7566dfa18169d40c2e54"
+                "reference": "96c57055927d0f2b4d0fe545896a7a0335adbeb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/safe-stream/zipball/8bbbeda8415b8352642d7566dfa18169d40c2e54",
-                "reference": "8bbbeda8415b8352642d7566dfa18169d40c2e54",
+                "url": "https://api.github.com/repos/nette/safe-stream/zipball/96c57055927d0f2b4d0fe545896a7a0335adbeb5",
+                "reference": "96c57055927d0f2b4d0fe545896a7a0335adbeb5",
                 "shasum": ""
             },
             "require": {
@@ -678,9 +678,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/safe-stream/issues",
-                "source": "https://github.com/nette/safe-stream/tree/v2.5.0"
+                "source": "https://github.com/nette/safe-stream/tree/v2.5.1"
             },
-            "time": "2022-01-03T23:13:32+00:00"
+            "time": "2022-12-12T17:17:33+00:00"
         },
         {
             "name": "nette/utils",
