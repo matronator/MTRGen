@@ -15,6 +15,9 @@ use Nette\PhpGenerator\Property;
 
 class Generator
 {
+    public const RESERVED_KEYWORDS = ['__halt_compiler', 'abstract', 'and', 'array', 'as', 'break', 'callable', 'case', 'catch', 'class', 'clone', 'const', 'continue', 'declare', 'default', 'die', 'do', 'echo', 'else', 'elseif', 'empty', 'enddeclare', 'endfor', 'endforeach', 'endif', 'endswitch', 'endwhile', 'eval', 'exit', 'extends', 'final', 'finally', 'fn', 'for', 'foreach', 'function', 'global', 'goto', 'if', 'implements', 'include', 'include_once', 'instanceof', 'insteadof', 'interface', 'isset', 'list', 'match', 'namespace', 'new', 'or', 'print', 'private', 'protected', 'public', 'readonly', 'require', 'require_once', 'return', 'static', 'switch', 'throw', 'trait', 'try', 'unset', 'use', 'var', 'while', 'xor', 'yield', 'yield_from'];
+    public const RESERVED_CONSTANTS = ['__CLASS__', '__DIR__', '__FILE__', '__FUNCTION__', '__LINE__', '__METHOD__', '__NAMESPACE__', '__TRAIT__'];
+
     /**
      * Checks if template is bundle
      *
@@ -107,7 +110,7 @@ class Generator
      */
     private static function class(object $object, array $args, mixed &$parent = null): ClassType
     {
-        $class = !$parent ? new ClassType(Parser::parseString($object->name, $args)) : $parent->addClass(Parser::parseString($object->name, $args));
+        $class = !$parent ? new ClassType(self::makeNameSafe(Parser::parseString($object->name, $args))) : $parent->addClass(self::makeNameSafe(Parser::parseString($object->name, $args)));
 
         return self::defineObject($object, $args, $class);
     }
@@ -120,7 +123,7 @@ class Generator
      */
     private static function interface(object $object, array $args, mixed &$parent = null): ClassType
     {
-        $interface = !$parent ? ClassType::interface(Parser::parseString($object->name, $args)) : $parent->addInterface(Parser::parseString($object->name, $args));
+        $interface = !$parent ? ClassType::interface(self::makeNameSafe(Parser::parseString($object->name, $args))) : $parent->addInterface(self::makeNameSafe(Parser::parseString($object->name, $args)));
 
         return self::defineObject($object, $args, $interface);
     }
@@ -133,7 +136,7 @@ class Generator
      */
     private static function trait(object $object, array $args, mixed &$parent = null): ClassType
     {
-        $trait = !$parent ? ClassType::trait(Parser::parseString($object->name, $args)) : $parent->addTrait(Parser::parseString($object->name, $args));
+        $trait = !$parent ? ClassType::trait(self::makeNameSafe(Parser::parseString($object->name, $args))) : $parent->addTrait(self::makeNameSafe(Parser::parseString($object->name, $args)));
 
         return self::defineObject($object, $args, $trait);
     }
@@ -163,7 +166,7 @@ class Generator
         }
         if (self::is($object->constants)) {
             foreach ($object->constants as $const) {
-                $constant = $class->addConstant(Parser::parseString($const->name, $args), Parser::parseString($const->value, $args));
+                $constant = $class->addConstant(self::makeNameSafe(Parser::parseString($const->name, $args)), Parser::parseString($const->value, $args));
                 if (self::is($const->visibility)) $constant->setVisibility($const->visibility);
                 if (self::is($const->comments)) {
                     foreach ($const->comments as $comment) {
@@ -195,7 +198,7 @@ class Generator
 
     private static function namespace(object $object, PhpFile &$file, array $args): PhpNamespace
     {
-        $namespace = $file->addNamespace(Parser::parseString($object->name, $args));
+        $namespace = $file->addNamespace(self::makeNameSafe(Parser::parseString($object->name, $args)));
 
         if (self::is($object->use)) {
             foreach ($object->use as $use) {
@@ -251,7 +254,7 @@ class Generator
 
     private static function getter(string $name, string $type): Method
     {
-        $getter = new Method('get' . ucfirst($name));
+        $getter = new Method(self::makeNameSafe('get' . ucfirst($name)));
         $getter->addComment("@return $type");
 
         $getter->setReturnType($type);
@@ -262,7 +265,7 @@ class Generator
 
     private static function setter(string $name, string $type): Method
     {
-        $setter = new Method('set' . ucfirst($name));
+        $setter = new Method(self::makeNameSafe('set' . ucfirst($name)));
         $setter->addComment("@param $type \$$name");
 
         $param = $setter->addParameter($name);
@@ -345,5 +348,29 @@ class Generator
     public static function is(mixed &$subject): bool
     {
         return is_array($subject) ? isset($subject) && count($subject) > 0 : isset($subject);
+    }
+
+    /**
+     * Check if the given name is a reserved keyword
+     * @param string $name
+     * @return bool
+     */
+    public static function isReservedKeyword(string $name): bool
+    {
+        return in_array($name, self::RESERVED_KEYWORDS) || in_array($name, self::RESERVED_CONSTANTS);
+    }
+
+    /**
+     * Make the given name safe by adding an underscore if it is a reserved keyword
+     * @param string $name
+     * @return string
+     */
+    public static function makeNameSafe(string $name): string
+    {
+        $newName = self::isReservedKeyword($name) ? '_' . $name : $name;
+        if (self::isReservedKeyword($newName)) {
+            return self::makeNameSafe($newName);
+        }
+        return $newName;
     }
 }
