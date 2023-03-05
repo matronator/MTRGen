@@ -156,7 +156,7 @@ class Generator
         if (self::is($object->extends)) $class->setExtends(Parser::parseString($object->extends, $args));
         if (self::is($object->implements)) {
             foreach ($object->implements as $implement) {
-                $class->addImplements(Parser::parseString($implement, $args));
+                $class->addImplement(Parser::parseString($implement, $args));
             }
         }
         if (self::is($object->traits)) {
