@@ -19,7 +19,7 @@ class RemoveTemplateCommand extends Command
 
     public function configure(): void
     {
-        $this->setAliases(['r']);
+        $this->setAliases(['rm']);
         $this->addArgument('name', InputArgument::REQUIRED, 'Name of the template to remove.');
     }
 

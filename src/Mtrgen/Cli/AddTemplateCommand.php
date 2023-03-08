@@ -24,6 +24,7 @@ class AddTemplateCommand extends Command
 
     public function configure(): void
     {
+        $this->setAliases(['a']);
         $this->addArgument('identifier', InputArgument::REQUIRED, 'Full identifier of the template (vendor/name).');
     }
 

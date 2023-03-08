@@ -25,6 +25,7 @@ class UseCommand extends BaseGeneratorCommand
 
     public function configure(): void
     {
+        $this->setAliases(['u']);
         $this->addArgument('identifier', InputArgument::OPTIONAL, 'The identifier of the template to use from the online registry.');
         $this->addArgument('args', InputArgument::IS_ARRAY, 'Arguments to pass to the template (\'key=value\' items seperated by space).');
     }

@@ -17,6 +17,11 @@ class ListTemplatesCommand extends Command
     protected static $defaultName = 'saved';
     protected static $defaultDescription = 'List all saved templates in the global storage.';
 
+    public function configure(): void
+    {
+        $this->setAliases(['ls']);
+    }
+
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);

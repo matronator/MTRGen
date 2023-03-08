@@ -24,7 +24,7 @@ class GenerateCommand extends BaseGeneratorCommand
         $this->setAliases(['gen']);
         $this->addOption('path', 'p', InputOption::VALUE_REQUIRED, 'Optionally you can provide a path to a template file to generate from that file instead.');
         $this->addArgument('name', InputArgument::OPTIONAL, 'The name of the template to generate under which it\'s saved in the local store.');
-        $this->addArgument('args', InputArgument::IS_ARRAY, 'Arguments to pass to the template (\'key=value\' items seperated by space).');
+        $this->addArgument('args', InputArgument::IS_ARRAY, 'Arguments to pass to the template (\'key=value\' items separated by space).');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
