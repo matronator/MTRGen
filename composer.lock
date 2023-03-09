@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b9b36f9d8c93e0cb22f844a8ee0e172",
+    "content-hash": "35c0ed7937a71f8eb2ee622bf3f319ae",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -619,35 +619,38 @@
         },
         {
             "name": "nette/safe-stream",
-            "version": "v2.5.1",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/safe-stream.git",
-                "reference": "96c57055927d0f2b4d0fe545896a7a0335adbeb5"
+                "reference": "3eb1aaff68d0c81cfd9970a5e5e4228d97f493ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/safe-stream/zipball/96c57055927d0f2b4d0fe545896a7a0335adbeb5",
-                "reference": "96c57055927d0f2b4d0fe545896a7a0335adbeb5",
+                "url": "https://api.github.com/repos/nette/safe-stream/zipball/3eb1aaff68d0c81cfd9970a5e5e4228d97f493ba",
+                "reference": "3eb1aaff68d0c81cfd9970a5e5e4228d97f493ba",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1"
+                "php": ">=8.0 <8.3"
             },
             "require-dev": {
-                "nette/tester": "^2.0",
+                "nette/tester": "^2.4",
                 "phpstan/phpstan": "^0.12",
-                "tracy/tracy": "^2.3"
+                "tracy/tracy": "^2.8"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.5-dev"
+                    "dev-master": "3.0-dev"
                 }
             },
             "autoload": {
                 "files": [
                     "src/loader.php"
+                ],
+                "classmap": [
+                    "src/"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -678,9 +681,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/safe-stream/issues",
-                "source": "https://github.com/nette/safe-stream/tree/v2.5.1"
+                "source": "https://github.com/nette/safe-stream/tree/v3.0.0"
             },
-            "time": "2022-12-12T17:17:33+00:00"
+            "time": "2022-12-13T18:48:16+00:00"
         },
         {
             "name": "nette/utils",
