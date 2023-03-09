@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "35c0ed7937a71f8eb2ee622bf3f319ae",
+    "content-hash": "9cf4479c4dd839266d935dacc57d2cbe",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -551,35 +551,35 @@
         },
         {
             "name": "nette/php-generator",
-            "version": "v3.6.9",
+            "version": "v4.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/php-generator.git",
-                "reference": "d31782f7bd2ae84ad06f863391ec3fb77ca4d0a6"
+                "reference": "a8d6abeae5d8c7202cd69600e086a7a72877fc86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/php-generator/zipball/d31782f7bd2ae84ad06f863391ec3fb77ca4d0a6",
-                "reference": "d31782f7bd2ae84ad06f863391ec3fb77ca4d0a6",
+                "url": "https://api.github.com/repos/nette/php-generator/zipball/a8d6abeae5d8c7202cd69600e086a7a72877fc86",
+                "reference": "a8d6abeae5d8c7202cd69600e086a7a72877fc86",
                 "shasum": ""
             },
             "require": {
-                "nette/utils": "^3.1.2",
-                "php": ">=7.2 <8.3"
+                "nette/utils": "^3.2.7 || ^4.0",
+                "php": ">=8.0 <8.3"
             },
             "require-dev": {
                 "nette/tester": "^2.4",
-                "nikic/php-parser": "^4.13",
-                "phpstan/phpstan": "^0.12",
+                "nikic/php-parser": "^4.15",
+                "phpstan/phpstan": "^1.0",
                 "tracy/tracy": "^2.8"
             },
             "suggest": {
-                "nikic/php-parser": "to use ClassType::withBodiesFrom() & GlobalFunction::withBodyFrom()"
+                "nikic/php-parser": "to use ClassType::from(withBodies: true) & ClassType::fromCode()"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.6-dev"
+                    "dev-master": "4.0-dev"
                 }
             },
             "autoload": {
@@ -603,7 +603,7 @@
                     "homepage": "https://nette.org/contributors"
                 }
             ],
-            "description": "🐘 Nette PHP Generator: generates neat PHP code for you. Supports new PHP 8.1 features.",
+            "description": "🐘 Nette PHP Generator: generates neat PHP code for you. Supports new PHP 8.2 features.",
             "homepage": "https://nette.org",
             "keywords": [
                 "code",
@@ -613,9 +613,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/php-generator/issues",
-                "source": "https://github.com/nette/php-generator/tree/v3.6.9"
+                "source": "https://github.com/nette/php-generator/tree/v4.0.5"
             },
-            "time": "2022-10-04T11:49:47+00:00"
+            "time": "2022-11-02T20:37:46+00:00"
         },
         {
             "name": "nette/safe-stream",
