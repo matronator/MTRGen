@@ -241,6 +241,16 @@ class Storage
     }
 
     /**
+     * Check if template is a bundle by filename
+     * @param string $filename
+     * @return boolean
+     */
+    public function isBundle(string $filename): bool
+    {
+        return (bool) preg_match('/^.+?(\.bundle\.).+?$/', $filename);
+    }
+
+    /**
      * Create and save the global store
      * @return void
      */
@@ -311,10 +321,5 @@ class Storage
         $this->saveStore($store);
 
         return $filename;
-    }
-
-    public function isBundle(string $filename): bool
-    {
-        return (bool) preg_match('/^.+?(\.bundle\.).+?$/', $filename);
     }
 }

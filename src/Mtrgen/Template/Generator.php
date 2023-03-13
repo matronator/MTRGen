@@ -60,6 +60,12 @@ class Generator
         return self::generateFile($object, $arguments);
     }
 
+    /**
+     * Generate a FileObject from a parsed object
+     * @param object $parsed
+     * @param array $arguments
+     * @return FileObject
+     */
     public static function generateFile(object $parsed, array $arguments): FileObject
     {
         $filename = Parser::parseString($parsed->filename, $arguments);
@@ -72,13 +78,25 @@ class Generator
         return new FileObject($outDir, $filename, $file);
     }
 
-    public static function getName(string $path, ?string $contents = null)
+    /**
+     * Get the name of the template from a file
+     * @param string $path
+     * @param string|null $contents
+     * @return string
+     */
+    public static function getName(string $path, ?string $contents = null): string
     {
         $object = Parser::decodeByExtension($path, $contents);
 
         return $object->name;
     }
 
+    /**
+     * Generates a PhpFile from a parsed object
+     * @param object $body
+     * @param array $args
+     * @return PhpFile
+     */
     public static function generate(object $body, array $args): PhpFile
     {
         $file = new PhpFile;
@@ -100,6 +118,40 @@ class Generator
         }
 
         return $file;
+    }
+
+    /**
+     * Shorthand for checking if a variable is set and not empty
+     * @param mixed &$subject
+     * @return boolean
+     */
+    public static function is(mixed &$subject): bool
+    {
+        return is_array($subject) ? isset($subject) && count($subject) > 0 : isset($subject);
+    }
+
+    /**
+     * Check if the given name is a reserved keyword
+     * @param string $name
+     * @return bool
+     */
+    public static function isReservedKeyword(string $name): bool
+    {
+        return in_array($name, self::RESERVED_KEYWORDS) || in_array($name, self::RESERVED_CONSTANTS);
+    }
+
+    /**
+     * Make the given name safe by adding an underscore if it is a reserved keyword
+     * @param string $name
+     * @return string
+     */
+    public static function makeNameSafe(string $name): string
+    {
+        $newName = self::isReservedKeyword($name) ? '_' . $name : $name;
+        if (self::isReservedKeyword($newName)) {
+            return self::makeNameSafe($newName);
+        }
+        return $newName;
     }
 
     /**
@@ -343,34 +395,5 @@ class Generator
         }
 
         return $file;
-    }
-
-    public static function is(mixed &$subject): bool
-    {
-        return is_array($subject) ? isset($subject) && count($subject) > 0 : isset($subject);
-    }
-
-    /**
-     * Check if the given name is a reserved keyword
-     * @param string $name
-     * @return bool
-     */
-    public static function isReservedKeyword(string $name): bool
-    {
-        return in_array($name, self::RESERVED_KEYWORDS) || in_array($name, self::RESERVED_CONSTANTS);
-    }
-
-    /**
-     * Make the given name safe by adding an underscore if it is a reserved keyword
-     * @param string $name
-     * @return string
-     */
-    public static function makeNameSafe(string $name): string
-    {
-        $newName = self::isReservedKeyword($name) ? '_' . $name : $name;
-        if (self::isReservedKeyword($newName)) {
-            return self::makeNameSafe($newName);
-        }
-        return $newName;
     }
 }
