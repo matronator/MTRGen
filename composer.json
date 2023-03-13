@@ -35,7 +35,7 @@
         "nette/safe-stream": "^2.5 || ^3.0",
         "symfony/yaml": "^6.2",
         "symfony/validator": "^6.2",
-        "nette/finder": "^2.5",
+        "nette/finder": "^2.5 || ^3.0",
         "opis/json-schema": "^2.3",
         "matronator/parsem": "^2.0",
         "guzzlehttp/guzzle": "^7.5"
