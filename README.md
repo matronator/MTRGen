@@ -4,6 +4,8 @@
 
 ### [Official Website](https://mtrgen.com)
 
+### [Documentation](https://mtrgen.com/docs)
+
 File generator engine that can generate PHP files from JSON/YAML/NEON templates.
 
 ## Requirements
