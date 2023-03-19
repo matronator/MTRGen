@@ -2,9 +2,9 @@
 
 ![MTRGen Logo](docs/assets/images/logo.png)
 
-### [Official Website](https://mtrgen.com)
+#### [Official Website](https://mtrgen.com)
 
-### [Documentation](https://mtrgen.com/docs)
+#### [Documentation](https://mtrgen.com/docs)
 
 File generator engine that can generate PHP files from JSON/YAML/NEON templates.
 
