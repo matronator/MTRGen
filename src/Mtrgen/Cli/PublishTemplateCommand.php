@@ -78,12 +78,12 @@ class PublishTemplateCommand extends BaseGeneratorCommand
     }
 
     /**
-     * @param mixed $response
+     * @param $response
      * @param OutputInterface $output
      * @param string $name
      * @return integer
      */
-    private function checkResponse(mixed $response, OutputInterface $output, string $message): int
+    private function checkResponse($response, OutputInterface $output, string $message): int
     {
         if (is_string($response)) {
             $this->io->text($response);

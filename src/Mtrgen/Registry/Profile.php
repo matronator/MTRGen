@@ -30,7 +30,7 @@ class Profile
         return $this->saveProfile($profile);
     }
 
-    public function saveProfile(object $profile): mixed
+    public function saveProfile(object $profile)
     {
         return file_put_contents(Path::safe($this->profile), json_encode($profile));
     }

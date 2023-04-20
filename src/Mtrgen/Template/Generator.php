@@ -83,7 +83,7 @@ class Generator
      * @param array $args
      * @param PhpFile|PhpNamespace|null $parent
      */
-    private static function class(object $object, array $args, mixed &$parent = null): ClassType
+    private static function class(object $object, array $args, &$parent = null): ClassType
     {
         $class = !$parent ? new ClassType(Parser::parseString($object->name, $args)) : $parent->addClass(Parser::parseString($object->name, $args));
 
@@ -96,7 +96,7 @@ class Generator
      * @param array $args
      * @param PhpFile|PhpNamespace|null $parent
      */
-    private static function interface(object $object, array $args, mixed &$parent = null): ClassType
+    private static function interface(object $object, array $args, &$parent = null): ClassType
     {
         $interface = !$parent ? ClassType::interface(Parser::parseString($object->name, $args)) : $parent->addInterface(Parser::parseString($object->name, $args));
 
@@ -109,7 +109,7 @@ class Generator
      * @param array $args
      * @param PhpFile|PhpNamespace|null $parent
      */
-    private static function trait(object $object, array $args, mixed &$parent = null): ClassType
+    private static function trait(object $object, array $args, &$parent = null): ClassType
     {
         $trait = !$parent ? ClassType::trait(Parser::parseString($object->name, $args)) : $parent->addTrait(Parser::parseString($object->name, $args));
 
@@ -320,7 +320,7 @@ class Generator
         return $file;
     }
 
-    public static function is(mixed &$subject): bool
+    public static function is(&$subject): bool
     {
         return is_array($subject) ? isset($subject) && count($subject) > 0 : isset($subject);
     }

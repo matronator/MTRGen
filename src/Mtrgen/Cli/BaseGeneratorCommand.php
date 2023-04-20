@@ -42,7 +42,7 @@ abstract class BaseGeneratorCommand extends Command
         $this->io = new SymfonyStyle($this->input, $this->output);
     }
 
-    protected function askName(mixed $helper): ?string
+    protected function askName($helper): ?string
     {
         $templates = $this->storage->listAll();
         $choices = [];
@@ -64,7 +64,7 @@ abstract class BaseGeneratorCommand extends Command
         return null;
     }
 
-    protected function askPath(mixed $helper): string
+    protected function askPath($helper): string
     {
         $this->io->newLine();
         $pathQuestion = new Question('<comment><options=bold>Enter the path to your template file</>:</comment> ');
@@ -106,7 +106,7 @@ abstract class BaseGeneratorCommand extends Command
         return $file->fread($file->getSize());
     }
 
-    protected function askArguments(mixed $helper, ?string $path = null, ?string $identifier = null, mixed $template = null, ?string $contents = null): array
+    protected function askArguments($helper, ?string $path = null, ?string $identifier = null, $template = null, ?string $contents = null): array
     {
         if ($identifier) {
             if (!$template) $template = $this->connection->getTemplate($identifier);

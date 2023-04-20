@@ -110,7 +110,7 @@ class Storage
         return basename($filename);
     }
 
-    public function download(string $identifier, string $filename, string $content): mixed
+    public function download(string $identifier, string $filename, string $content)
     {
         $this->saveEntry($identifier, $filename);
         return file_put_contents(Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $filename), $content);

@@ -136,7 +136,7 @@ class Connection
         ];
     }
 
-    public function postTemplate(string $path, ?OutputInterface $io = null): mixed
+    public function postTemplate(string $path, ?OutputInterface $io = null)
     {
         $profile = new Profile;
         if (!$profile->authenticate())
