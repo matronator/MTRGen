@@ -40,7 +40,7 @@
         "matronator/parsem": "^1.0",
         "guzzlehttp/guzzle": "^7.5"
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "config": {
         "platform": {
 			"php": "7.4"
