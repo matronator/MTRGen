@@ -37,7 +37,7 @@ class FileGenerator
      * @return string|false The path to the folder or false if it doesn't exits
      * @param string $folder
      */
-    public static function folderExist(string $folder): mixed
+    public static function folderExist(string $folder)
     {
         $path = Path::canonicalize($folder);
 
