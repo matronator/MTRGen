@@ -6,7 +6,7 @@ namespace Matronator\Mtrgen;
 
 use Nette\PhpGenerator\PhpFile;
 
-class FileObject
+class PhpFileObject
 {
     public PhpFile $contents;
 

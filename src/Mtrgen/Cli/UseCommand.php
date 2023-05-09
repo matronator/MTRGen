@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Matronator\Mtrgen\Cli;
 
-use Matronator\Mtrgen\FileGenerator;
+use Matronator\Mtrgen\ClassicFileGenerator;
 use Matronator\Mtrgen\Registry\Connection;
-use Matronator\Mtrgen\Template\Generator;
+use Matronator\Mtrgen\Template\ClassicGenerator;
 use Matronator\Parsem\Parser;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -33,7 +33,7 @@ class UseCommand extends BaseGeneratorCommand
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
-        
+
         /** @var SymfonyQuestionHelper $helper */
         $helper = $this->getHelper('question');
         $identifier = $input->getArgument('identifier') ?? null;
@@ -56,11 +56,11 @@ class UseCommand extends BaseGeneratorCommand
                 $contents = $template->contents;
                 $arguments = $this->askArguments($helper, null, $identifier, $template);
             }
-    
+
             $output->writeln("Generating file from template <options=bold>$identifier</>...");
             $this->io->newLine();
-    
-            FileGenerator::writeFile(Generator::parse($template->filename, $contents, $arguments));
+
+            ClassicFileGenerator::writeFile(ClassicGenerator::parse($template->filename, $contents, $arguments));
         } else {
             $output->writeln("Generating files from bundle <options=bold>$identifier</>...");
             $bundle = Parser::decodeByExtension($template->filename, $template->contents);
@@ -70,7 +70,7 @@ class UseCommand extends BaseGeneratorCommand
                 $this->io->title("<fg=yellow>Template <options=bold>{$templateName}</>:</>");
                 $arguments = $this->askArguments($helper, null, $identifier, $template, $downloaded->contents);
                 $output->writeln("Generating file from template <options=bold>{$templateName}</>...");
-                FileGenerator::writeFile(Generator::parse($temp->path, $downloaded->contents, $arguments));
+                ClassicFileGenerator::writeFile(ClassicGenerator::parse($temp->path, $downloaded->contents, $arguments));
                 $this->io->newLine();
             }
         }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Matronator\Mtrgen\Cli;
 
 use Matronator\Mtrgen\Store\Storage;
-use Matronator\Mtrgen\Template\Generator;
+use Matronator\Mtrgen\Template\ClassicGenerator;
 use Matronator\Parsem\Parser;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

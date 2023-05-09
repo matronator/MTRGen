@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Matronator\Mtrgen\Cli;
 
-use Matronator\Mtrgen\FileGenerator;
+use Matronator\Mtrgen\ClassicFileGenerator;
 use Matronator\Mtrgen\Store\Path;
-use Matronator\Mtrgen\Template\Generator;
+use Matronator\Mtrgen\Template\ClassicGenerator;
 use Matronator\Parsem\Parser;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,10 +33,10 @@ class GenerateCommand extends BaseGeneratorCommand
 
         $helper = $this->getHelper('question');
 
-        $path = $input->getOption('path') ?? null;
+        $path = $input->getOption('path');
 
         if (!$path) {
-            $name = $input->getArgument('name') ?? null;
+            $name = $input->getArgument('name');
 
             if (!$name) {
                 $path = $this->askName($helper);
@@ -53,38 +53,38 @@ class GenerateCommand extends BaseGeneratorCommand
             $path = $this->askPath($helper);
         }
 
-        $name = Generator::getName($path);
+        $name = ClassicGenerator::getName($path);
 
         if (!$this->storage->isBundle($path)) {
-            $arguments = $this->getArguments($input->getArgument('args')) ?? null;
+            $arguments = $this->getArguments($input->getArgument('args'));
             if (!$arguments) {
                 $arguments = $this->askArguments($helper, $path);
             }
 
             $output->writeln("Generating file from template <options=bold>{$name}</>...");
             $this->io->newLine();
-    
-            FileGenerator::writeFile(Generator::parseFile($path, $arguments));
+
+            ClassicFileGenerator::writeFile(ClassicGenerator::parseFile($path, $arguments));
         } else {
             $output->writeln("Generating files from bundle <options=bold>{$name}</>...");
             $this->io->newLine();
 
             $bundle = Parser::decodeByExtension($path);
-            $arguments = $this->getArguments($input->getArgument('args')) ?? null;
+            $arguments = $this->getArguments($input->getArgument('args'));
             if (!$arguments) {
                 foreach ($bundle->templates as $temp) {
                     $templatePath = Path::canonicalize($this->storage->templateDir . DIRECTORY_SEPARATOR . $temp->path);
                     $arguments = $this->askArguments($helper, $templatePath);
                     $templateName = $temp->name;
                     $output->writeln("Generating file from template <options=bold>{$templateName}</>...");
-                    FileGenerator::writeFile(Generator::parseFile($templatePath, $arguments));
+                    ClassicFileGenerator::writeFile(ClassicGenerator::parseFile($templatePath, $arguments));
                 }
             } else {
                 foreach ($bundle->templates as $temp) {
                     $templatePath = Path::canonicalize($this->storage->templateDir . DIRECTORY_SEPARATOR . $temp->path);
                     $templateName = $temp->name;
                     $output->writeln("Generating file from template <options=bold>{$templateName}</>...");
-                    FileGenerator::writeFile(Generator::parseFile($templatePath, $arguments));
+                    ClassicFileGenerator::writeFile(ClassicGenerator::parseFile($templatePath, $arguments));
                 }
             }
         }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Matronator\Mtrgen\Cli;
 
 use Matronator\Mtrgen\Store\Storage;
-use Matronator\Mtrgen\Template\Generator;
+use Matronator\Mtrgen\Template\ClassicGenerator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -38,7 +38,7 @@ class SaveTemplateCommand extends BaseGeneratorCommand
 
         $storage = new Storage;
         if ($storage->save($path, $alias)) {
-            $name = $alias ?? Generator::getName($path);
+            $name = $alias ?? ClassicGenerator::getName($path);
             $output->writeln("<fg=green>Template '$name' added from '$path'!</>");
             $this->io->newLine();
 
