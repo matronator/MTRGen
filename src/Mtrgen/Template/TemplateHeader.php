@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Matronator\Mtrgen;
+namespace Matronator\Mtrgen\Template;
 
 class TemplateHeader
 {

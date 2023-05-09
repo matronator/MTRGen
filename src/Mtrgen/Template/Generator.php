@@ -3,7 +3,7 @@
 namespace Matronator\Mtrgen\Template;
 
 use Matronator\Mtrgen\GenericFileObject;
-use Matronator\Mtrgen\TemplateHeader;
+use Matronator\Mtrgen\Template\TemplateHeader;
 use Matronator\Parsem\Parser;
 
 class Generator
@@ -50,7 +50,7 @@ class Generator
         $lines = preg_split('/\n|\r\n/', $header);
         $info = [];
         foreach ($lines as $line) {
-            $line = trim($line, " \t\n\r\0\x0B\\");
+            $line = trim($line, " /\t\n\r\0\x0B\\");
             $keyValue = explode(':', $line);
             $key = trim($keyValue[0]);
             $value = trim($keyValue[1]);
