@@ -2,7 +2,9 @@
 
 namespace Matronator\Mtrgen\Template;
 
+use Matronator\Mtrgen\ClassicFileGenerator;
 use Matronator\Mtrgen\GenericFileObject;
+use Matronator\Mtrgen\Store\Path;
 use Matronator\Mtrgen\Template\TemplateHeader;
 use Matronator\Parsem\Parser;
 
@@ -11,11 +13,11 @@ class Generator
     public const RESERVED_KEYWORDS = ClassicGenerator::RESERVED_KEYWORDS;
     public const RESERVED_CONSTANTS = ClassicGenerator::RESERVED_CONSTANTS;
 
-    public const HEADER_PATTERN = '/^\S+ --- MTRGEN ---.(.+)\s\S+ --- MTRGEN ---/s';
+    public const HEADER_PATTERN = '/^\S+ --- MTRGEN ---.(.+)\s\S+ --- MTRGEN ---/sm';
 
     public const COMMENT_PATTERN = '/\/\*\s?([a-zA-Z0-9_]+)\|?(([a-zA-Z0-9_]+?)(?:\:(?:(?:\'|")?\w(?:\'|")?,?)+?)*?)?\s?\*\//m';
 
-    public static function parseAnyFile(string $path, bool $useCommentSyntax = false): GenericFileObject
+    public static function parseAnyFile(string $path, array $arguments = [], bool $useCommentSyntax = false): GenericFileObject
     {
         $file = file_get_contents($path);
 
@@ -23,12 +25,39 @@ class Generator
             throw new \RuntimeException(sprintf('File "%s" was not found', $path));
         }
 
-        $arguments = Parser::getArguments($file, $useCommentSyntax !== false ? self::COMMENT_PATTERN : null);
         $parsed = Parser::parseString($file, $arguments, $useCommentSyntax !== false ? self::COMMENT_PATTERN : null);
 
-        preg_match_all(self::HEADER_PATTERN, $parsed, $matches);
+        $header = static::getTemplateHeader($parsed);
+        $parsed = static::removeHeader($parsed);
 
-        return new GenericFileObject(dirname($path), basename($path), $parsed);
+        return new GenericFileObject($header->path, $header->filename, $parsed);
+    }
+
+    /**
+     * Write parsed files to disk
+     *
+     * @param GenericFileObject[]|GenericFileObject $files
+     * @return void
+     */
+    public static function writeFiles($files)
+    {
+        if (is_array($files)) {
+            foreach ($files as $file) {
+                self::write($file);
+            }
+        } else {
+            self::write($files);
+        }
+    }
+
+    private static function write(GenericFileObject $file): void
+    {
+        if (!ClassicFileGenerator::folderExist($file->directory) && !mkdir($concurrentDirectory = $file->directory, 0777, true) && !is_dir($concurrentDirectory)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+        }
+
+        file_put_contents(Path::safe(str_ends_with($file->directory, DIRECTORY_SEPARATOR) 
+            ? $file->directory . $file->filename : $file->directory . DIRECTORY_SEPARATOR . $file->filename), $file->contents);
     }
 
     /**
@@ -62,5 +91,10 @@ class Generator
         }
 
         return TemplateHeader::fromArray($info);
+    }
+
+    public static function removeHeader(string $content): string
+    {
+        return ltrim(preg_replace(self::HEADER_PATTERN, '', $content));
     }
 }

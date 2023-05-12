@@ -11,7 +11,7 @@ class GenericFileObject
     public string $directory;
 
     public function __construct(string $directory, string $filename, string $contents) {
-        $this->filename = $filename . '.php';
+        $this->filename = $filename;
         $this->contents = $contents;
         $this->directory = $directory;
     }

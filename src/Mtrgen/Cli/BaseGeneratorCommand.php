@@ -79,6 +79,24 @@ abstract class BaseGeneratorCommand extends Command
         return $path;
     }
 
+    protected function shouldAskArguments(mixed $helper): bool
+    {
+        $this->io->newLine();
+        $shouldAskQuestion = new ChoiceQuestion('<comment><options=bold>All variables found in template have default values and can be generated without providing arguments. Do you want to provide arguments anyway or proceed with the default ones?</>:</comment> ', [0 => 'Proceed with default values', 1 => 'Provide arguments'], 0);
+        $shouldAsk = $helper->ask($this->input, $this->output, $shouldAskQuestion);
+        $this->io->newLine();
+        if ($shouldAsk === 'Provide arguments') {
+            $shouldAsk = true;
+            $this->io->writeln('<fg=green>Arguments will be asked.</>');
+        } else {
+            $shouldAsk = false;
+            $this->io->writeln('<fg=green>Proceeding with default arguments.</>');
+        }
+        $this->io->newLine();
+
+        return (bool) $shouldAsk;
+    }
+
     protected function getArguments(array $args): array
     {
         $arguments = [];
@@ -96,14 +114,8 @@ abstract class BaseGeneratorCommand extends Command
             $this->io->error("File '$path' doesn't exists.");
             return null;
         }
-        $file = new SplFileObject($path);
 
-        if (!in_array($file->getExtension(), ['yml', 'yaml', 'json', 'neon'])) {
-            $this->io->error("File '$path' isn't of a valid type (supported extensions are: yml, yaml, json, neon).");
-            return null;
-        }
-
-        return $file->fread($file->getSize());
+        return file_get_contents($path);
     }
 
     protected function askArguments(mixed $helper, ?string $path = null, ?string $identifier = null, mixed $template = null, ?string $contents = null): array
@@ -117,20 +129,26 @@ abstract class BaseGeneratorCommand extends Command
             }
         } else {
             $template = $this->getTemplate($path, $this->io);
-            if (!$template)
+            if (!$template) {
+                $this->io->error('Template not found.');
                 return Command::FAILURE;
+            }
         }
         
         $this->output->writeln('<fg=green>Template found!</>');
         $this->output->writeln('Looking for template parameters...');
 
         $args = Parser::getArguments($identifier ? $contents : $template);
-        if ($args !== []) {
+        if ($args->arguments !== []) {
             $this->io->writeln('<fg=green>Template parameters found!</>');
             $this->io->newLine();
             $arguments = [];
-            foreach ($args as $arg) {
-                $argQuestion = new Question("<comment><options=bold>Enter the value for parameter '$arg'</>:</comment> ");
+            foreach ($args->arguments as $key => $arg) {
+                if (isset($args->defaults[$key]) && $args->defaults[$key] !== '') {
+                    $argQuestion = new Question("<comment><options=bold>Enter the value for parameter '$arg' (optional)</> [default: {$args->defaults[$key]}]:</comment> ", $args->defaults[$key]);
+                } else {
+                    $argQuestion = new Question("<comment><options=bold>Enter the value for parameter '$arg'</>:</comment> ");
+                }
                 $arguments[$arg] = $helper->ask($this->input, $this->output, $argQuestion);
                 $this->io->newLine();
             }

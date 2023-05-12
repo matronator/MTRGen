@@ -175,4 +175,11 @@ class Path
     {
         return self::canonicalize(self::getRoot() . self::canonicalize($path));
     }
+
+    public static function getExtension(string $path): string
+    {
+        $parts = explode('.', $path);
+        // return $parts[count($parts) - 1];
+        return end($parts);
+    }
 }
