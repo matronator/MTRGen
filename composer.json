@@ -37,7 +37,7 @@
         "symfony/validator": "^6.2",
         "nette/finder": "^2.5 || ^3.0",
         "opis/json-schema": "^2.3",
-        "matronator/parsem": "^2.0",
+        "matronator/parsem": "^2.0 || ^3.0",
         "guzzlehttp/guzzle": "^7.5"
     },
     "minimum-stability": "dev",
