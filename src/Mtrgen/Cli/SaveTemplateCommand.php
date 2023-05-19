@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class SaveTemplateCommand extends BaseGeneratorCommand
 {
     protected static $defaultName = 'save';
-    protected static $defaultDescription = 'Saves a template to the global store.';
+    protected static $defaultDescription = 'Saves a template to the local store.';
 
     public function configure(): void
     {

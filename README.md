@@ -10,7 +10,7 @@ File generator engine that can generate PHP files from JSON/YAML/NEON templates.
 
 ## Requirements
 
-- PHP >= 7.4
+- PHP >= 8.1
 - Composer
 
 ## Instalation

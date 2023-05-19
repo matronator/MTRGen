@@ -83,7 +83,9 @@ class Connection
             case 'text/neon':
                 $extension = 'neon';
             default:
-                $extension = 'neon';
+                $filename = $response->getHeaderLine('X-Template-Filename');
+                $parts = explode('.', $filename);
+                $extension = end($parts);
         }
 
         $typeUrl = $this->apiUrl . "/templates/$vendor/$name/type";
@@ -125,7 +127,9 @@ class Connection
             case 'text/neon':
                 $extension = 'neon';
             default:
-                $extension = 'neon';
+                $filename = $response->getHeaderLine('X-Template-Filename');
+                $parts = explode('.', $filename);
+                $extension = end($parts);
         }
 
         return (object) [
