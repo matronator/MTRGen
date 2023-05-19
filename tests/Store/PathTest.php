@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-require __DIR__ . '/../bootstrap.php';
-
 namespace Matronator\Mtrgen\Tests\Store;
+
+require __DIR__ . '/../bootstrap.php';
 
 use Matronator\Mtrgen\Store\Path;
 use Tester\Assert;
