@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require __DIR__ . '/../bootstrap.php';
 
-use Matronator\Mtrgen\Cli\Application;
-use Matronator\Mtrgen\Cli\GenerateCommand;
+namespace Matronator\Mtrgen\Tests\Template;
+
 use Matronator\Mtrgen\Template\Generator;
 use Tester\Assert;
 use Tester\TestCase;
@@ -13,19 +13,30 @@ use Tester\TestCase;
 class GeneratorTest extends TestCase
 {
     public const TEST_TEMPLATE = <<<EOT
-    // --- MTRGEN ---
-    // name: js-template
-    // filename: <% name %>.js
-    // path: assets/js
-    // --- MTRGEN ---
-    
-    document.addEventListener('<% event %>', function() {
-        var template = document.querySelector('#<% id %>');
-        var templateContent = template.content;
-        var clone = document.importNode(templateContent, true);
-        document.body.appendChild(clone);
-    });
-    EOT;
+// --- MTRGEN ---
+// name: js-template
+// filename: <% name %>.js
+// path: assets/js
+// --- MTRGEN ---
+
+document.addEventListener('<% event %>', function() {
+    var template = document.querySelector('#<% id="myId" %>');
+    var templateContent = template.content;
+    template.classList.add('<% classes="template"|lower %>');
+    var clone = document.importNode(templateContent, true);
+    document.body.appendChild(clone);
+});
+EOT;
+
+    public const PARSED_TEMPLATE = <<<EOT
+document.addEventListener('DOMContentLoaded', function() {
+    var template = document.querySelector('#my-template');
+    var templateContent = template.content;
+    template.classList.add('template');
+    var clone = document.importNode(templateContent, true);
+    document.body.appendChild(clone);
+});
+EOT;
 
     public function testGetTemplateHeader()
     {
@@ -39,9 +50,24 @@ class GeneratorTest extends TestCase
 
     public function testFileGeneration()
     {
-        $expected = static::TEST_TEMPLATE;
+        $expected = static::PARSED_TEMPLATE;
 
-        Assert::matchFile($expected, file_get_contents('assets/js/my-template.js'), 'File generation');
+        Generator::writeFiles(Generator::parseAnyFile('../templates/js-template.mtr.js', [
+            'name' => 'my-template',
+            'event' => 'DOMContentLoaded',
+            'id' => 'my-template',
+        ]));
+
+        Assert::matchFile('assets/js/my-template.js', $expected);
+    }
+
+    public function tearDown(): void
+    {
+        if (file_exists('assets/js/my-template.js')) {
+            unlink('assets/js/my-template.js');
+            rmdir('assets/js');
+            rmdir('assets');
+        }
     }
 }
 
