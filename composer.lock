@@ -2265,20 +2265,20 @@
     "packages-dev": [
         {
             "name": "nette/tester",
-            "version": "v2.5.0",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/tester.git",
-                "reference": "78555c76859208ee049335863e63e357ba71578f"
+                "reference": "92ad30ca60ac1e27f0c7e48b8b4e4ff1395c00c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/tester/zipball/78555c76859208ee049335863e63e357ba71578f",
-                "reference": "78555c76859208ee049335863e63e357ba71578f",
+                "url": "https://api.github.com/repos/nette/tester/zipball/92ad30ca60ac1e27f0c7e48b8b4e4ff1395c00c0",
+                "reference": "92ad30ca60ac1e27f0c7e48b8b4e4ff1395c00c0",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0 <8.3"
+                "php": ">=8.0 <8.4"
             },
             "require-dev": {
                 "ext-simplexml": "*",
@@ -2334,9 +2334,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/tester/issues",
-                "source": "https://github.com/nette/tester/tree/v2.5.0"
+                "source": "https://github.com/nette/tester/tree/v2.5.1"
             },
-            "time": "2023-03-02T02:14:46+00:00"
+            "time": "2023-07-30T10:24:11+00:00"
         }
     ],
     "aliases": [],
