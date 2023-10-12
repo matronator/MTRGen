@@ -125,6 +125,7 @@ abstract class BaseGeneratorCommand extends Command
         $this->output->writeln('Looking for template parameters...');
 
         $args = Parser::getArguments($identifier ? $contents : $template);
+        $args = $args->arguments;
         if ($args !== []) {
             $this->io->writeln('<fg=green>Template parameters found!</>');
             $this->io->newLine();
