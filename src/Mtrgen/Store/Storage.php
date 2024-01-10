@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Matronator\Mtrgen\Store;
 
+use Matronator\Mtrgen\Template\Generator;
 use InvalidArgumentException;
 use Matronator\Mtrgen\ClassicFileGenerator;
+use Matronator\Mtrgen\Template;
 use Matronator\Mtrgen\Template\ClassicGenerator;
 use Matronator\Parsem\Parser;
 use Nette\Neon\Neon;
@@ -53,12 +55,18 @@ class Storage
         if (!file_exists($file))
             return false;
 
+        if (Template::isLegacy($file)) {
+            $name = ClassicGenerator::getName($file);
+        } else {
+            $name = Generator::getName(path: $file);
+        }
+
         $basename = $bundle ? $bundle . DIRECTORY_SEPARATOR . basename($file) : basename($file);
         if ($bundle && !ClassicFileGenerator::folderExist($this->templateDir . DIRECTORY_SEPARATOR . $bundle) && !mkdir($concurrentDirectory = $this->templateDir . DIRECTORY_SEPARATOR . $bundle, 0777, true) && !is_dir($concurrentDirectory)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 
-        $this->saveEntry($alias ?? ($bundle ? "$bundle:" . ClassicGenerator::getName($file) : ClassicGenerator::getName($file)), $basename);
+        $this->saveEntry($alias ?? ($bundle ? "$bundle:" . $name : $name), $basename);
         copy($file, Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $basename));
 
         return true;
@@ -243,6 +251,19 @@ class Storage
     public function isBundle(string $filename): bool
     {
         return (bool) preg_match('/^.+?(\.bundle\.).+?$/', $filename);
+    }
+
+    public function repairStore(): void
+    {
+        $store = $this->loadStore();
+
+        foreach ($store->templates as $name => $filename) {
+            if (!file_exists(Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $filename))) {
+                unset($store->templates->{$name});
+            }
+        }
+
+        $this->saveStore($store);
     }
 
     /**

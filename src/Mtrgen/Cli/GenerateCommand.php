@@ -9,6 +9,7 @@ use Matronator\Mtrgen\Store\Path;
 use Matronator\Mtrgen\Template;
 use Matronator\Mtrgen\Template\ClassicGenerator;
 use Matronator\Mtrgen\Template\Generator;
+use Matronator\Mtrgen\Template\TemplateNotFoundException;
 use Matronator\Parsem\Parser;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -56,7 +57,12 @@ class GenerateCommand extends BaseGeneratorCommand
             $path = $this->askPath($helper);
         }
         
-        $isLegacy = Template::isLegacy($path);
+        try {
+            $isLegacy = Template::isLegacy($path);
+        } catch (TemplateNotFoundException $e) {
+            $this->io->error($e->getMessage());
+            return self::FAILURE;
+        }
         $name = $isLegacy ? ClassicGenerator::getName($path) : Generator::getName($this->getTemplate($path));
 
         if ($isLegacy) {

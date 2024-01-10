@@ -13,7 +13,7 @@ class Generator
     public const RESERVED_KEYWORDS = ClassicGenerator::RESERVED_KEYWORDS;
     public const RESERVED_CONSTANTS = ClassicGenerator::RESERVED_CONSTANTS;
 
-    public const HEADER_PATTERN = '/^\S+ --- MTRGEN ---.(.+)\s\S+ --- MTRGEN ---/sm';
+    public const HEADER_PATTERN = '/^\S+ --- MTRGEN ---.(.+)\s\S+ --- MTRGEN ---/ms';
 
     public const COMMENT_PATTERN = '/\/\*\s?([a-zA-Z0-9_]+)\|?(([a-zA-Z0-9_]+?)(?:\:(?:(?:\'|")?\w(?:\'|")?,?)+?)*?)?\s?\*\//m';
 
@@ -39,7 +39,7 @@ class Generator
      * @param GenericFileObject[]|GenericFileObject $files
      * @return void
      */
-    public static function writeFiles($files)
+    public static function writeFiles(mixed $files)
     {
         if (is_array($files)) {
             foreach ($files as $file) {
@@ -63,11 +63,18 @@ class Generator
     /**
      * Get the template name
      *
-     * @param string $content
+     * @param string|null $content
+     * @param string|null $path
      * @return string
      */
-    public static function getName(string $content): string
+    public static function getName(?string $content = null, ?string $path = null): string
     {
+        if (!$content && !$path) {
+            throw new \RuntimeException('Either content or path must be provided.');
+        }
+        if (!$content && $path) {
+            $content = file_get_contents($path);
+        }
         return static::getTemplateHeader($content)->name;
     }
 

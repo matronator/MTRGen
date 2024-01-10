@@ -22,7 +22,7 @@ class GeneratorTest extends TestCase
 document.addEventListener('<% event %>', function() {
     var template = document.querySelector('#<% id="myId" %>');
     var templateContent = template.content;
-    template.classList.add('<% classes="template"|lower %>');
+    template.classList.add('<% classes="TEMPLATE"|lower %>');
     var clone = document.importNode(templateContent, true);
     document.body.appendChild(clone);
 });
@@ -36,6 +36,39 @@ document.addEventListener('DOMContentLoaded', function() {
     var clone = document.importNode(templateContent, true);
     document.body.appendChild(clone);
 });
+EOT;
+
+    public const PARSED_FILE = <<<EOT
+<?php
+
+declare(strict_types=1);
+
+namespace Matronator\Mtrgen\Cli;
+
+use Matronator\Parsem\Parser;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+class HelloCommand extends BaseGeneratorCommand
+{
+    protected static \$defaultName = 'hello';
+    protected static \$defaultDescription = 'Hello world!';
+
+    public function configure(): void
+    {
+        \$this->setAliases(['hi']);
+    }
+
+    public function execute(InputInterface \$input, OutputInterface \$output): int
+    {
+        parent::execute(\$input, \$output);
+
+        \$this->io->newLine();
+        return self::SUCCESS;
+    }
+}
+
 EOT;
 
     public function testGetTemplateHeader()
@@ -61,12 +94,29 @@ EOT;
         Assert::matchFile('assets/js/my-template.js', $expected);
     }
 
+    public function testPhpFromFile()
+    {
+        $expected = static::PARSED_FILE;
+
+        Generator::writeFiles(Generator::parseAnyFile('../templates/Command.mtr.php', [
+            'namespace' => '\Cli',
+            'commandName' => 'hello',
+            'commandAliases' => 'hi',
+            'commandDescription' => 'Hello world!',
+        ]));
+
+        Assert::matchFile('src/Mtrgen/Cli/HelloCommand.php', $expected);
+    }
+
     public function tearDown(): void
     {
         if (file_exists('assets/js/my-template.js')) {
             unlink('assets/js/my-template.js');
             rmdir('assets/js');
             rmdir('assets');
+        }
+        if (file_exists('src/Mtrgen/Cli/HelloCommand.php')) {
+            unlink('src/Mtrgen/Cli/HelloCommand.php');
         }
     }
 }

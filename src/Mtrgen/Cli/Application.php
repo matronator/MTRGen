@@ -23,6 +23,7 @@ class Application
             new ListTemplatesCommand(),
             new SaveBundleCommand(),
             new ValidateCommand(),
+            new RepairCommand(),
         ]);
     }
 }
