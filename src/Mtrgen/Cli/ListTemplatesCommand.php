@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ListTemplatesCommand extends Command
 {
     protected static $defaultName = 'saved';
-    protected static $defaultDescription = 'List all saved templates in the global storage.';
+    protected static $defaultDescription = 'List all saved templates in the local store.';
 
     public function configure(): void
     {

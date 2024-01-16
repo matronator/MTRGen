@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Matronator\Mtrgen\Store;
 
-use InvalidArgumentException;
-use Matronator\Mtrgen\FileGenerator;
 use Matronator\Mtrgen\Template\Generator;
+use InvalidArgumentException;
+use Matronator\Mtrgen\ClassicFileGenerator;
+use Matronator\Mtrgen\Template;
+use Matronator\Mtrgen\Template\ClassicGenerator;
 use Matronator\Parsem\Parser;
 use Nette\Neon\Neon;
 use Nette\Utils\Finder;
@@ -26,14 +28,14 @@ class Storage
         $this->templateDir = Path::canonicalize('~/.mtrgen/templates');
         $this->store = Path::canonicalize('~/.mtrgen/templates.json');
 
-        if (!FileGenerator::folderExist($this->homeDir)) {
-            mkdir($this->homeDir, 0777, true);
+        if (!ClassicFileGenerator::folderExist($this->homeDir) && !mkdir($concurrentDirectory = $this->homeDir, 0777, true) && !is_dir($concurrentDirectory)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
-        if (!FileGenerator::folderExist($this->tempDir)) {
-            mkdir($this->tempDir, 0777, true);
+        if (!ClassicFileGenerator::folderExist($this->tempDir) && !mkdir($concurrentDirectory = $this->tempDir, 0777, true) && !is_dir($concurrentDirectory)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
-        if (!FileGenerator::folderExist($this->templateDir)) {
-            mkdir($this->templateDir, 0777, true);
+        if (!ClassicFileGenerator::folderExist($this->templateDir) && !mkdir($concurrentDirectory = $this->templateDir, 0777, true) && !is_dir($concurrentDirectory)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
         if (!file_exists($this->store)) {
             $this->createStore();
@@ -52,15 +54,19 @@ class Storage
 
         if (!file_exists($file))
             return false;
-        
-        $basename = $bundle ? $bundle . DIRECTORY_SEPARATOR . basename($file) : basename($file);
-        if ($bundle) {
-            if (!FileGenerator::folderExist($this->templateDir . DIRECTORY_SEPARATOR . $bundle)) {
-                mkdir($this->templateDir . DIRECTORY_SEPARATOR . $bundle, 0777, true);
-            }
+
+        if (Template::isLegacy($file)) {
+            $name = ClassicGenerator::getName($file);
+        } else {
+            $name = Generator::getName(path: $file);
         }
 
-        $this->saveEntry($alias ?? ($bundle ? "$bundle:" . Generator::getName($file) : Generator::getName($file)), $basename);
+        $basename = $bundle ? $bundle . DIRECTORY_SEPARATOR . basename($file) : basename($file);
+        if ($bundle && !ClassicFileGenerator::folderExist($this->templateDir . DIRECTORY_SEPARATOR . $bundle) && !mkdir($concurrentDirectory = $this->templateDir . DIRECTORY_SEPARATOR . $bundle, 0777, true) && !is_dir($concurrentDirectory)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+        }
+
+        $this->saveEntry($alias ?? ($bundle ? "$bundle:" . $name : $name), $basename);
         copy($file, Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $basename));
 
         return true;
@@ -87,7 +93,7 @@ class Storage
         }
 
         $filename = "$name.bundle.$format";
-        
+
         file_put_contents(Path::safe(Path::canonicalize($this->tempDir . DIRECTORY_SEPARATOR . $filename)), $contents);
 
         if ($this->save($this->tempDir . DIRECTORY_SEPARATOR . $filename, $name)) {
@@ -152,7 +158,7 @@ class Storage
     public function saveFolder(string $path): ?int
     {
         $path = Path::canonicalize($path);
-        if (!FileGenerator::folderExist($path))
+        if (!ClassicFileGenerator::folderExist($path))
             return null;
 
         $store = $this->loadStore();
@@ -162,7 +168,7 @@ class Storage
         foreach ($files as $key => $file) {
             if (!Parser::isValid($key)) continue;
 
-            $store = $this->entry($store, Generator::getName($key), $key);
+            $store = $this->entry($store, ClassicGenerator::getName($key), $key);
             $added++;
         }
 
@@ -176,7 +182,7 @@ class Storage
      * @return string|false
      * @param string $name Name under which the template is stored
      */
-    public function getContent(string $name): string
+    public function getContent(string $name): string|false
     {
         return file_get_contents(Path::safe($this->getFullPath($name)));
     }
@@ -212,9 +218,7 @@ class Storage
         if (!isset($store->templates->{$name}))
             return null;
 
-        $filename = $store->templates->{$name};
-
-        return $filename;
+        return $store->templates->{$name};
     }
 
     /**
@@ -236,8 +240,7 @@ class Storage
      */
     public function listAll(): object
     {
-        $store = $this->loadStore();
-        return $store->templates;
+        return $this->loadStore()->templates;
     }
 
     /**
@@ -248,6 +251,19 @@ class Storage
     public function isBundle(string $filename): bool
     {
         return (bool) preg_match('/^.+?(\.bundle\.).+?$/', $filename);
+    }
+
+    public function repairStore(): void
+    {
+        $store = $this->loadStore();
+
+        foreach ($store->templates as $name => $filename) {
+            if (!file_exists(Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $filename))) {
+                unset($store->templates->{$name});
+            }
+        }
+
+        $this->saveStore($store);
     }
 
     /**

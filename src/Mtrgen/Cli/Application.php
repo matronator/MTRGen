@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Matronator\Mtrgen\Cli;
 
-use Symfony\Component\Console\Application as ConsoleApplication;
-
 class Application
 {
-    public ConsoleApplication $app;
+    public MtrgenApplication $app;
 
     public function __construct()
     {
-        $this->app = new ConsoleApplication('MTRGen', '1.0.0');
+        $this->app = new MtrgenApplication('MTRGen', '2.0.0');
         $this->app->addCommands([
             new GenerateCommand($this->app),
             new SaveTemplateCommand(),
@@ -25,7 +23,7 @@ class Application
             new ListTemplatesCommand(),
             new SaveBundleCommand(),
             new ValidateCommand(),
+            new RepairCommand(),
         ]);
-        $this->app->setDefaultCommand('generate');
     }
 }

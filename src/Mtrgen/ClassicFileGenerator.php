@@ -8,7 +8,7 @@ use Matronator\Mtrgen\Store\Path;
 use Nette\PhpGenerator\PsrPrinter;
 use Nette\PhpGenerator\Printer;
 
-class FileGenerator
+class ClassicFileGenerator
 {
     public static function writeFile($files): void
     {
@@ -23,10 +23,10 @@ class FileGenerator
         }
     }
 
-    private static function write(FileObject $file, Printer $printer): void
+    private static function write(PhpFileObject $file, Printer $printer): void
     {
-        if (!self::folderExist($file->directory)) {
-            mkdir($file->directory, 0777, true);
+        if (!self::folderExist($file->directory) && !mkdir($concurrentDirectory = $file->directory, 0777, true) && !is_dir($concurrentDirectory)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 
         file_put_contents(Path::safe($file->directory . $file->filename), $printer->printFile($file->contents));

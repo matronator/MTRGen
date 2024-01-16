@@ -8,7 +8,7 @@ use Matronator\Mtrgen\Registry\Connection;
 use Matronator\Mtrgen\Registry\Profile;
 use Matronator\Mtrgen\Store\Path;
 use Matronator\Mtrgen\Store\Storage;
-use Matronator\Mtrgen\Template\Generator;
+use Matronator\Mtrgen\Template\ClassicGenerator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -50,7 +50,7 @@ class PublishTemplateCommand extends BaseGeneratorCommand
             $template = $this->storage->load($name);
             if ($template) {
                 $path = $template->filename;
-    
+
                 $response = $this->connection->postTemplate(Path::canonicalize($this->storage->templateDir . DIRECTORY_SEPARATOR . $path), $output);
                 $profile = (new Profile)->loadProfile();
                 $fullname = strtolower($profile->username . '/' . $name);
@@ -65,7 +65,7 @@ class PublishTemplateCommand extends BaseGeneratorCommand
         }
 
         $response = $this->connection->postTemplate($path, $output);
-        $name = Generator::getName($path);
+        $name = ClassicGenerator::getName($path);
         $profile = (new Profile)->loadProfile();
         $fullname = strtolower($profile->username . '/' . $name);
         return $this->checkResponse($response, $output, "<fg=green>Template '$name' published as '$fullname'!</>");

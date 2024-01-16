@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Matronator\Mtrgen\Cli;
 
 use Matronator\Mtrgen\Store\Storage;
-use Matronator\Mtrgen\Template\Generator;
+use Matronator\Mtrgen\Template\ClassicGenerator;
 use Matronator\Parsem\Parser;
 use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 use Symfony\Component\Console\Command\Command;
@@ -79,12 +79,12 @@ class SaveBundleCommand extends Command
                 return self::INVALID;
             }
 
-            $templateName = Generator::getName($templatePath);
+            $templateName = ClassicGenerator::getName($templatePath);
             if (!$storage->save($templatePath, null, $name)) {
                 $io->error("File '{$templatePath}' doesn't exist.");
                 return self::FAILURE;
             }
-            
+
             $newPath = Storage::getBasename($templatePath);
             $data->templates[] = (object) [
                 'name' => $templateName,

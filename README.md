@@ -2,15 +2,21 @@
 
 ![MTRGen Logo](docs/assets/images/logo.png)
 
-#### [Official Website](https://mtrgen.com)
+*Generate files from templates with ease.*
 
-#### [Documentation](https://mtrgen.com/docs)
+[![Latest Stable Version](https://poser.pugx.org/matronator/mtrgen/v)](https://packagist.org/packages/matronator/mtrgen)
+[![Total Downloads](https://poser.pugx.org/matronator/mtrgen/downloads)](https://packagist.org/packages/matronator/mtrgen)
+[![License](https://poser.pugx.org/matronator/mtrgen/license)](https://packagist.org/packages/matronator/mtrgen)
 
-File generator engine that can generate PHP files from JSON/YAML/NEON templates.
+#### [Official Website](https://mtrgen.com) | [Documentation](https://mtrgen.com/docs) | [Template Repository](https://mtrgen.com/repository)
+
+File generator for source code files.
+
+MTRGen is a CLI tool that can be used in any project and generate files in any language. Create your own templates or use templates from the [online repository](https://www.mtrgen.com/repository). MTRGen is a great tool for generating boilerplate code, but it can also be used to generate any other type of file.
 
 ## Requirements
 
-- PHP >= 7.4
+- PHP >= 8.1
 - Composer
 
 ## Instalation
@@ -18,7 +24,7 @@ File generator engine that can generate PHP files from JSON/YAML/NEON templates.
 Install with Composer:
 
 ```
-composer require matronator/mtrgen --dev
+composer require matronator/mtrgen
 ```
 
 #### Troubleshooting
@@ -39,13 +45,13 @@ If you can't or don't want to update composer, use version `"^1.0"` of this pack
 
 ## Documentation
 
-[Read the full documentation here.](https://matronator.github.io/MTRGen/)
+[Read the full documentation here](https://www.mtrgen.com/docs/) *- needs to be updated to version 2!*
 
 ## Quickstart
 
-You run the script from terminal using this command:
+Here are some examples of commands you can run with MTRGen:
 
-```
+```bash
 # To list all available commands
 vendor/bin/mtrgen list
 
@@ -60,6 +66,10 @@ vendor/bin/mtrgen gen -p my/folder/template.json
 # Generate from the global store
 vendor/bin/mtrgen generate TemplateName
 
+# Download template from the online repository and save it to the global store
+vendor/bin/mtrgen add vendor/template
+vendor/bin/mtrgen a vendor/template
+
 # Save a template to the global store
 vendor/bin/mtrgen save path/to/template.json
 vendor/bin/mtrgen s path/to/template.json
@@ -67,14 +77,18 @@ vendor/bin/mtrgen s path/to/template.json
 # Optionally provide an alias to save the template under
 vendor/bin/mtrgen save path/to/template.json --alias=NewName
 
+# Save a bundle to the global store
+vendor/bin/mtrgen save-bundle BundleName path/to/template1.json path/to/template2.json
+vendor/bin/mtrgen sb BundleName path/to/template1.json path/to/template2.json
+
 # Remove a template from the global store
 vendor/bin/mtrgen remove TemplateName
-vendor/bin/mtrgen r TemplateName
+vendor/bin/mtrgen rm TemplateName
+
+# Repair the global store (remove all templates that don't exist)
+vendor/bin/mtrgen repair
+vendor/bin/mtrgen r
 ```
-
-## Acknowledgement
-
-This project would not be possible without [Nette](https://nette.org)'s [`php-generator`](https://github.com/nette/php-generator) package, which is used for the final code generation itself to output the finished PHP file.
 
 ## License
 

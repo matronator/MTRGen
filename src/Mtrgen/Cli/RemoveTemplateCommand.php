@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class RemoveTemplateCommand extends Command
 {
     protected static $defaultName = 'remove';
-    protected static $defaultDescription = 'Removes a template from the global storage.';
+    protected static $defaultDescription = 'Removes a template from the local store.';
 
     public function configure(): void
     {

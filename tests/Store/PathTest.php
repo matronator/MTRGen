@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Matronator\Mtrgen\Tests\Store;
+
 require __DIR__ . '/../bootstrap.php';
 
 use Matronator\Mtrgen\Store\Path;
