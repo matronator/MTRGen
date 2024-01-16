@@ -47,6 +47,7 @@ class Storage
      * @return boolean True if save is successful, false otherwise
      * @param string $filename
      * @param string|null $alias Alias to save the template under instead of the name defined inside the template
+     * @param string|null $bundle Name of the bundle or null if not a bundle
      */
     public function save(string $filename, ?string $alias = null, ?string $bundle = null): bool
     {

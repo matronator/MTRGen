@@ -1,0 +1,4 @@
+(object) /* #cd27 */ [
+	'filename' => 'test.template.yaml',
+	'contents' => "name: test-template\nfilename: <%name%>Entity\npath: app/model/Database/Entity\nfile:\n    class:\n        name: <%name%>Entity\n",
+]

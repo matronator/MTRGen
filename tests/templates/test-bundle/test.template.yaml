@@ -1,6 +1,4 @@
-name: test-template-bundle
-filename: <%name%>Entity
-path: app/model/Database/Entity
-file:
-    class:
-        name: <%name%>Entity
+name: database
+templates:
+    - name: Command
+      path: ../Command.mtr.php
