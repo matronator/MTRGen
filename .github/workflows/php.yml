@@ -12,15 +12,16 @@ permissions:
 jobs:
   build:
 
-    runs-on: ubuntu-20.04
-    container:
-      image: php:8.2
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
-    - name: Update composer
-      run: composer update
+    - name: Setup PHP
+      id: setup-php
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
 
     - name: Validate composer.json and composer.lock
       run: composer validate
