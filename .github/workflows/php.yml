@@ -25,7 +25,7 @@ jobs:
         extensions: bcmath, bz2, calendar, Core, ctype, curl, date, dba, dom, exif, FFI, fileinfo, filter, ftp, gd, gmp, hash, iconv, imagick, imap, intl, json, ldap, libxml, mbstring, mysqli, mysqlnd, openssl, pcntl, pcre, PDO, pdo_mysql, pdo_pgsql, pdo_sqlite, pgsql, Phar, posix, random, readline, redis, Reflection, session, shmop, SimpleXML, soap, sockets, sodium, SPL, sqlite3, standard, sysvmsg, sysvsem, sysvshm, tokenizer, xml, xmlreader, xmlwriter, xsl, Zend OPcache, zip, zlib
 
     - name: Validate composer.json and composer.lock
-      run: composer validate
+      run: composer validate && composer require symfony/polyfill-iconv
 
     - name: Cache Composer packages
       id: composer-cache
