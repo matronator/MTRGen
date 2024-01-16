@@ -8,7 +8,7 @@
 [![Total Downloads](https://poser.pugx.org/matronator/mtrgen/downloads)](https://packagist.org/packages/matronator/mtrgen)
 [![License](https://poser.pugx.org/matronator/mtrgen/license)](https://packagist.org/packages/matronator/mtrgen)
 
-#### [Official Website](https://mtrgen.com) | [Documentation](https://mtrgen.com/docs) | [Template Repository](https://mtrgen.com/repository)
+#### [Official Website](https://www.mtrgen.com) | [Documentation](https://www.mtrgen.com/docs/) | [Template Repository](https://www.mtrgen.com/repository)
 
 File generator for source code files.
 
