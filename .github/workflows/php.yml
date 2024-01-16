@@ -12,7 +12,9 @@ permissions:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    container:
+      image: php:8.2
 
     steps:
     - uses: actions/checkout@v3
