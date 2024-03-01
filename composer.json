@@ -34,7 +34,7 @@
         "nette/neon": "^3.3",
         "nette/safe-stream": "^3.0",
         "symfony/yaml": "^6.2",
-        "symfony/validator": "^6.2",
+        "symfony/validator": "^6.2 || ^7.0",
         "nette/finder": "^3.0",
         "opis/json-schema": "^2.3",
         "matronator/parsem": "^3.0",
