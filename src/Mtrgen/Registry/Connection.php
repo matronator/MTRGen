@@ -8,6 +8,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Matronator\Mtrgen\Store\Path;
 use Matronator\Mtrgen\Store\Storage;
+use Matronator\Mtrgen\Template;
+use Matronator\Mtrgen\Template\ClassicGenerator;
+use Matronator\Mtrgen\Template\Generator;
 use Matronator\Parsem\Parser;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -59,34 +62,12 @@ class Connection
     public function getTemplate(string $identifier): object
     {
         [$vendor, $name] = explode('/', $identifier);
-
         $url = $this->apiUrl . "/templates/$vendor/$name/get";
 
-        $client = new Client();
-        $response = $client->get($url, [
-            'headers' => [
-                'X-Requested-By' => 'cli',
-            ],
-        ]);
-        $contentType = $response->getHeaderLine('Content-Type');
-
-        switch ($contentType) {
-            case 'application/json':
-            case 'text/json':
-                $extension = 'json';
-            case 'text/x-yaml':
-            case 'application/x-yaml':
-            case 'text/yaml':
-                $extension = 'yaml';
-            case 'application/x-neon':
-            case 'text/x-neon':
-            case 'text/neon':
-                $extension = 'neon';
-            default:
-                $filename = $response->getHeaderLine('X-Template-Filename');
-                $parts = explode('.', $filename);
-                $extension = end($parts);
-        }
+        ['client' => $client,
+            'extension' => $extension,
+            'contentType' => $contentType,
+            'response' => $response ] = $this->getTemplateDetails($url);
 
         $typeUrl = $this->apiUrl . "/templates/$vendor/$name/type";
         $typeResponse = $client->get($typeUrl);
@@ -103,34 +84,11 @@ class Connection
     public function getTemplateFromBundle(string $identifier, string $templateName): object
     {
         [$vendor, $name] = explode('/', $identifier);
-
         $url = $this->apiUrl . "/bundles/$vendor/$name/$templateName/get";
 
-        $client = new Client();
-        $response = $client->get($url, [
-            'headers' => [
-                'X-Requested-By' => 'cli',
-            ],
-        ]);
-        $contentType = $response->getHeaderLine('Content-Type');
-
-        switch ($contentType) {
-            case 'application/json':
-            case 'text/json':
-                $extension = 'json';
-            case 'text/x-yaml':
-            case 'application/x-yaml':
-            case 'text/yaml':
-                $extension = 'yaml';
-            case 'application/x-neon':
-            case 'text/x-neon':
-            case 'text/neon':
-                $extension = 'neon';
-            default:
-                $filename = $response->getHeaderLine('X-Template-Filename');
-                $parts = explode('.', $filename);
-                $extension = end($parts);
-        }
+        ['extension' => $extension,
+            'contentType' => $contentType,
+            'response' => $response ] = $this->getTemplateDetails($url);
 
         return (object) [
             'filename' => "$name.template.$extension",
@@ -145,12 +103,8 @@ class Connection
         if (!$profile->authenticate())
             return '<fg=red>You must login first.</>';
 
-        $matched = preg_match('/^(.+\/)?(.+?\.(json|yml|yaml|neon))$/', $path, $matches);
-        if (!$matched)
-            return "Couldn't get filename from path '$path'.";
-
-        $filename = $matches[2];
-        $template = Parser::decodeByExtension($path, file_get_contents($path));
+        $matches = explode(DIRECTORY_SEPARATOR, $path);
+        $filename = end($matches);
 
         $profileObject = $profile->loadProfile();
 
@@ -161,6 +115,7 @@ class Connection
                 return '<fg=red>Invalid bundle.</>';
             
             $templates = [];
+            $template = Parser::decodeByExtension($path, file_get_contents($path));
             foreach ($template->templates as $item) {
                 $templates[] = (object) [
                     'name' => $item->name,
@@ -177,14 +132,17 @@ class Connection
             ];
             $url = $this->apiUrl . '/bundles';
         } else {
-            if (!Parser::isValid(Path::makeAbsolute($path), file_get_contents(Path::makeAbsolute($path))))
+            $contents = file_get_contents(Path::makeAbsolute($path));
+            $isLegacy = Template::isLegacy($path);
+            $name = $isLegacy ? ClassicGenerator::getName($path, $contents) : Generator::getName($contents);
+            if ($isLegacy && !Parser::isValid(Path::makeAbsolute($path), $contents))
                 return '<fg=red>Invalid template.</>';
             
             $body = [
                 'username' => $profileObject->username,
                 'filename' => $filename,
-                'name' => strtolower($template->name),
-                'contents' => file_get_contents(Path::makeAbsolute($path)),
+                'name' => strtolower($name),
+                'contents' => $contents,
             ];
             $url = $this->apiUrl . '/templates';
         }
@@ -212,5 +170,42 @@ class Connection
         $config = json_decode(file_get_contents(__DIR__ . '/../../../config.json'));
 
         return $config->debug ?? false;
+    }
+
+    private function getTemplateDetails(string $url): array
+    {
+        $client = new Client();
+        $response = $client->get($url, [
+            'headers' => [
+                'X-Requested-By' => 'cli',
+            ],
+        ]);
+        $contentType = $response->getHeaderLine('Content-Type');
+
+        switch ($contentType) {
+            case 'application/json':
+            case 'text/json':
+                $extension = 'json';
+            case 'text/x-yaml':
+            case 'text/yaml':
+            case 'application/x-yaml':
+            case 'application/yaml':
+                $extension = 'yaml';
+            case 'application/x-neon':
+            case 'text/x-neon':
+            case 'text/neon':
+                $extension = 'neon';
+            default:
+                $filename = $response->getHeaderLine('X-Template-Filename');
+                $parts = explode('.', $filename);
+                $extension = end($parts);
+        }
+
+        return [
+            'client' => $client,
+            'extension' => $extension,
+            'contentType' => $contentType,
+            'response' => $response,
+        ];
     }
 }

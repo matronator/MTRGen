@@ -20,9 +20,7 @@ class Template
             if (!$contents) {
                 throw new TemplateNotFoundException($path);
             }
-            if (Parser::isValid($path, $contents)) {
-                return true;
-            } else if (Parser::isValidBundle($path, $contents)) {
+            if (Parser::isValid($path, $contents) || Parser::isValidBundle($path, $contents)) {
                 return true;
             }
         }

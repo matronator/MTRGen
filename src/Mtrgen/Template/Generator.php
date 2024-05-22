@@ -10,16 +10,13 @@ use Matronator\Parsem\Parser;
 
 class Generator
 {
-    public const RESERVED_KEYWORDS = ClassicGenerator::RESERVED_KEYWORDS;
-    public const RESERVED_CONSTANTS = ClassicGenerator::RESERVED_CONSTANTS;
-
     public const HEADER_PATTERN = '/^\S+ --- MTRGEN ---.(.+)\s\S+ --- MTRGEN ---/ms';
 
     public const COMMENT_PATTERN = '/\/\*\s?([a-zA-Z0-9_]+)\|?(([a-zA-Z0-9_]+?)(?:\:(?:(?:\'|")?\w(?:\'|")?,?)+?)*?)?\s?\*\//m';
 
     public static function parseAnyFile(string $path, array $arguments = [], bool $useCommentSyntax = false): GenericFileObject
     {
-        $file = file_get_contents($path);
+        $file = ltrim(file_get_contents($path));
 
         if (!$file) {
             throw new \RuntimeException(sprintf('File "%s" was not found', $path));
@@ -57,7 +54,8 @@ class Generator
         }
 
         file_put_contents(Path::safe(str_ends_with($file->directory, DIRECTORY_SEPARATOR) 
-            ? $file->directory . $file->filename : $file->directory . DIRECTORY_SEPARATOR . $file->filename), $file->contents);
+            ? $file->directory . $file->filename
+            : $file->directory . DIRECTORY_SEPARATOR . $file->filename), $file->contents);
     }
 
     /**
@@ -73,7 +71,7 @@ class Generator
             throw new \RuntimeException('Either content or path must be provided.');
         }
         if (!$content && $path) {
-            $content = file_get_contents($path);
+            $content = file_get_contents(Path::canonicalize($path));
         }
         return static::getTemplateHeader($content)->name;
     }

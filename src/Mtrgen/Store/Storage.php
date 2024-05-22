@@ -47,9 +47,9 @@ class Storage
      * @return boolean True if save is successful, false otherwise
      * @param string $filename
      * @param string|null $alias Alias to save the template under instead of the name defined inside the template
-     * @param string|null $bundle Name of the bundle or null if not a bundle
+     * @param string|null $parentBundle Name of the bundle if the template belongs to a bundle or null if not a bundle
      */
-    public function save(string $filename, ?string $alias = null, ?string $bundle = null): bool
+    public function save(string $filename, ?string $alias = null, ?string $parentBundle = null): bool
     {
         $file = Path::canonicalize($filename);
 
@@ -62,12 +62,12 @@ class Storage
             $name = Generator::getName(path: $file);
         }
 
-        $basename = $bundle ? $bundle . DIRECTORY_SEPARATOR . basename($file) : basename($file);
-        if ($bundle && !ClassicFileGenerator::folderExist($this->templateDir . DIRECTORY_SEPARATOR . $bundle) && !mkdir($concurrentDirectory = $this->templateDir . DIRECTORY_SEPARATOR . $bundle, 0777, true) && !is_dir($concurrentDirectory)) {
+        $basename = $parentBundle ? $parentBundle . DIRECTORY_SEPARATOR . basename($file) : basename($file);
+        if ($parentBundle && !ClassicFileGenerator::folderExist($this->templateDir . DIRECTORY_SEPARATOR . $parentBundle) && !mkdir($concurrentDirectory = $this->templateDir . DIRECTORY_SEPARATOR . $parentBundle, 0777, true) && !is_dir($concurrentDirectory)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 
-        $this->saveEntry($alias ?? ($bundle ? "$bundle:" . $name : $name), $basename);
+        $this->saveEntry($alias ?? ($parentBundle ? $parentBundle . ':' . $name : $name), $basename);
         copy($file, Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $basename));
 
         return true;
@@ -90,7 +90,7 @@ class Storage
                 $contents = Neon::encode($bundleObject, true);
                 break;
             default:
-                throw new InvalidArgumentException('Unsupported format.');
+                throw new InvalidArgumentException('Unsupported bundle format.');
         }
 
         $filename = "$name.bundle.$format";
@@ -164,10 +164,10 @@ class Storage
 
         $store = $this->loadStore();
 
-        $files = Finder::findFiles('*.template.yaml', '*.template.json', '*.template.neon')->in($path);
+        $files = Finder::findFiles('*.template.*', '*.mtr.*', '*.mtr')->in($path);
         $added = 0;
         foreach ($files as $key => $file) {
-            if (!Parser::isValid($key)) continue;
+            if (!Parser::isValid($key, $file->read())) continue;
 
             $store = $this->entry($store, ClassicGenerator::getName($key), $key);
             $added++;
