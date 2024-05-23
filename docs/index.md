@@ -27,7 +27,7 @@ composer require matronator/mtrgen --dev
 If you get this error when trying to install:
 
 ```
-matronator/mtrgen v1.0.0 requires composer-runtime-api ^2.2 -> found composer-runtime-api[2.1.0] but it does not match the constraint.
+matronator/mtrgen requires composer-runtime-api ^2.2 -> found composer-runtime-api[2.1.0] but it does not match the constraint.
 ```
 
 Run this command to update composer to the latest version:
@@ -35,8 +35,6 @@ Run this command to update composer to the latest version:
 ```
 composer self-update
 ```
-
-If you can't or don't want to update composer, use version `"^1.0"` of this package as that doesn't depend on Composer runtime API 2.2.
 
 ## Quickstart
 
@@ -54,17 +52,17 @@ vendor/bin/mtrgen gen -h
 vendor/bin/mtrgen generate --path=my/folder/template.json
 vendor/bin/mtrgen gen -p my/folder/template.json
 
-# Generate from the global store
+# Generate from the local store
 vendor/bin/mtrgen generate TemplateName
 
-# Save a template to the global store
+# Save a template to the local store
 vendor/bin/mtrgen save path/to/template.json
 vendor/bin/mtrgen s path/to/template.json
 
 # Optionally provide an alias to save the template under
 vendor/bin/mtrgen save path/to/template.json --alias=NewName
 
-# Remove a template from the global store
+# Remove a template from the local store
 vendor/bin/mtrgen remove TemplateName
 vendor/bin/mtrgen r TemplateName
 ```

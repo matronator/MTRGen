@@ -10,13 +10,19 @@ compress_html:
   ignore:
     envs: all
 
+baseurl: /docs
+source: .
+destination: ./../docs
+
+enable_copy_code_button: true
+
 # Jekyll SEO
 title: "MTRGen Docs"
 tagline: "PHP file generator"
 description: "File generator engine that can generate PHP files from JSON/YAML/NEON templates."
 author:
   name: Matronator
-  url: https://matronator.com
+  url: https://matronator.cz
 logo: "assets/images/logo-main.png"
 social:
   name: matronator
@@ -28,7 +34,15 @@ social:
 aux_links:
   "View on GitHub":
     "//github.com/matronator/MTRGen"
+  "Main website":
+    "//"
 heading_anchors: true
+
+nav_external_links:
+  - title: "Main website"
+    url: "https://mtrgen.com"
+  - title: "View on GitHub"
+    url: "https://github.com/matronator/MTRGen"
 
 # Callouts
 callouts_opacity: 0.35

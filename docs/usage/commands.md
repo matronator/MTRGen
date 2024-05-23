@@ -1,6 +1,8 @@
 ---
-nav_order: 2
+layout: default
 title: CLI Commands
+nav_order: 2
+parent: Usage
 ---
 
 # CLI Commands

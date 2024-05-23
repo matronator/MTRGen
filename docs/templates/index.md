@@ -12,15 +12,72 @@ has_children: true
 Generator templates (or just templates) describe the structure of the generated file. Templates can be either YAML, JSON or NEON files and they have to conform to a JSON schema. We will talk more about the schema in the next chapter (*see [mtrgen-template-schema.json](template-structure.md#mtrgen-template-schema)*).
 
 {: .tip }
-> It is recommended to name your templates with a `.template` suffix after the name just before the extension (eg. `entity.template.yaml`). If you do that, the [MTRGen Templates Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=matronator.mtrgen-yaml-templates) VSCode extension, will automatically assign the correct schema to all `*.template.(yaml|yml|json|neon)` files, giving you auto-completion and instant validation.
+> It is recommended to name your templates with a `.mtr` suffix after the name right after the extension (eg. `entity.yaml.mtr`). If you do that, the [MTRGen Templates Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=matronator.mtrgen-yaml-templates) VSCode extension, will add syntax highlighting and snippets to all `*.mtr` files.
 
 ## Template syntax
 
-Even though generator templates are just regular YAML/JSON/NEON files, they are run through a custom template parser which enables some extra features using a special syntax.
+Templates are parsed with [Pars'Em](https://github.com/matronator/parsem) template parser which enables some extra features to make the templates more generic and useful.
+
+### Header
+
+All templates must include a header block with details about the template at the very top of the file starting on the first line. Templates without a header are not considered valid and even though can still be parsed with Pars'Em, they won't work with the `mtrgen` CLI tool.
+
+The header block looks like this:
+
+```
+--- MTRGEN ---
+name: template-name
+filename: <% name|firstUpper %>.php
+path: ./app/Controllers
+--- MTRGEN ---
+
+// Rest of the template
+```
+
+You can use template variables for the header values, except for the `name` field, which must be known beforehand to be able to correctly save and use the template later.
+
+#### Header fields
+
+##### `name`
+
+A unique name of the template to be saved under in the local store. If published to online repository, it will be used for the identifier (user/**name**). Can't use template variables in the value.
+
+##### `filename`
+
+The filename of the generated file. Can use template variables to make the filename dynamic.
+
+##### `path`
+
+Path to the directory into which to generate the file. Can use variables to make path dynamic.
+
+### Conditions
+
+You can use conditions in your templates by using the `<% if %>` and `<% endif %>` tags. The condition must be a valid PHP expression that will be evaluated and if it returns `true`, the content between the tags will be included in the final output.
+
+To use a variable provided in the arguments array in a condition, you must use the `$` sign before the variable name, like this: `<% if $variable == 'value' %>`. The `$` sign is used to differentiate between the template variable and a keyword such as `true` or `null`.
+
+{: .note-title .code-break }
+> Example
+>
+> ```yaml
+> some:
+> key
+> <% if $variable === 'value' %>
+> with value
+> <% endif %>
+> ```
+>
+> If you provide an argument `['variable' => 'value']`, the final output will be this:
+>
+> ```yaml
+> some:
+> key
+> with value
+> ```
 
 ### Variables
 
-You can define **template variables** (or *template parameters*) anywhere in the template. Variables are wrapped in `<%` and `%>` with optional space on either side (both `<%nospace%>` and `<% space %>` are valid) and the name must be an alphanumeric string with optional underscore/s (must match this regex `[a-zA-Z0-9_]+?`).
+You can define **template variables** (or *placeholder variables*) anywhere in the template. Variables are wrapped in `<%` and `%>` with optional space on either side (both `<%nospace%>` and `<% space %>` are valid) and the name must be an alphanumeric string with optional underscore/s (must match this regex `[a-zA-Z0-9_]+?`).
 
 To show you an example, here we define template parameters `prefix` and `dir` (*note the use of both syntaxes, one with spaces and one without*):
 
@@ -31,6 +88,13 @@ path: <%dir%>
 file:
 ...
 ```
+
+#### Default values
+
+Variables can optionally have a default value that will be used if no argument is provided for that variable during parsing. You can specify a default value like this: `<% variable='Default' %>`
+
+{: .tip .code-break }
+> If you're going to use filters, the default value comes before the filter, ie.: `<% variable='Default'|filter %>`
 
 ### Filters
 
@@ -56,6 +120,40 @@ The first argument will always the variable on which we're declaring the filter,
 
 *So far you can specify only one filter per variable declaration, but that will probably change in the future.*
 
-### Template syntax highlighting for VS Code
+#### Built-in filters
 
-To get syntax highlighting for template files (highlight/colorize `<% variable|filter %>` even inside strings), you can download the [MTRGen Templates Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=matronator.mtrgen-yaml-templates) extension for VS Code.
+There are a few built-in filters that you can use:
+
+`upper` - Converts the variable to uppercase
+
+`lower` - Converts the variable to lowercase
+
+`upperFirst` - Converts the first character of the variable to uppercase
+
+`lowerFirst` - Converts the first character of the variable to lowercase
+
+`first` - Returns the first character of the variable
+
+`last` - Returns the last character of the variable
+
+`camelCase` - Converts the variable to camelCase
+
+`snakeCase` - Converts the variable to snake_case
+
+`kebabCase` - Converts the variable to kebab-case
+
+`pascalCase` - Converts the variable to PascalCase
+
+`titleCase` - Converts the variable to Title Case
+
+`length` - Returns the length of the variable
+
+`reverse` - Reverses the variable
+
+`random` - Returns a random character from the variable
+
+`truncate` - Truncates the variable to the specified length
+
+## VSCode Extension
+
+To get syntax highlighting for template files (highlight/colorize `<% variable|filter %>` and `<% if %><% endif %>` even inside strings) and some helper snippets (like `---` to insert the template header), you can download the [MTRGen Templates Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=matronator.mtrgen-yaml-templates) extension for VS Code.

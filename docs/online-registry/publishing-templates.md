@@ -9,14 +9,23 @@ parent: Online registry
 
 Anyone can publish their template to the online registry. All you need is an account and a valid template to publish. Let's walk through the steps of how to publish a template.
 
-## Create an account
+- [How to publish a template](#how-to-publish-a-template)
+  - [1. Using the CLI tool](#1-using-the-cli-tool)
+    - [Using the `signup` and `login` commands](#using-the-signup-and-login-commands)
+    - [Publish your template with the `publish` command](#publish-your-template-with-the-publish-command)
+  - [2. Using the website](#2-using-the-website)
+    - [Create an account and login](#create-an-account-and-login)
+    - [Publish your template on the website](#publish-your-template-on-the-website)
+- [Template identifier](#template-identifier)
 
-You need an account to be able to publish your template online, so the first thing we need to do is to create an account. There are two ways you do that:
+## How to publish a template
+
+You need an account to be able to publish your template online, so the first thing we need to do is to create an account. Then we can publish the template. There are two ways you can do that:
 
 1. Use the CLI tool
-2. ~~Use the website~~ (work in progress)
+2. Use the website
 
-### Using the CLI tool
+### 1. Using the CLI tool
 
 To create an account using the CLI tool, we'll be using the `signup` command. It takes two arguments - username and a password.
 
@@ -50,7 +59,7 @@ vendor/bin/mtrgen login username password -d 0
 
 Now that your account is created and you've successfully logged in, it's time you finally publish your template.
 
-## Publish your template
+#### Publish your template with the `publish` command
 
 Publishing a template is as simple as just running a single command:
 
@@ -67,6 +76,30 @@ vendor/bin/mtrgen publish my-template
 ```
 
 If you don't provide any arguments/options (name nor path), the program will show you a list of all the templates you have saved in your local store and you can choose a template to publish from that list.
+
+### 2. Using the website
+
+If you don't want to use the CLI tool, you can also create an account using the website.
+
+#### Create an account and login
+
+![Step 1 - Find the Sign-up button](../assets/images/step-1-signup-button.png)
+
+Just go to [https://mtrgen.com](https://mtrgen.com) and click on the `Sign-up` button in the top right corner. You'll be redirected to the sign-up page where you can create your account.
+
+![Step 2 - Create an account](../assets/images/step-2-signup.png)
+
+After your account is created, you can login to the website and navigate to the `Profile` page.
+
+#### Publish your template on the website
+
+On the profile page, navigate to `Publish` using the side menu on the left and there you can upload and publish your template.
+
+![Step 3 - Publish the template](../assets/images/step-3-publish.png)
+
+And that's it! Your template is now available to everyone (if you didn't set it as private) on the online registry.
+
+## Template identifier
 
 After you publish the template, the identifier for the template will be constructed from your username and the `name` field inside your template file.
 

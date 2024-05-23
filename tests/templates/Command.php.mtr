@@ -1,8 +1,8 @@
-// --- MTRGEN ---
-// name: command
-// filename: <% commandName="test"|upperFirst %>Command.php
-// path: src/Mtrgen/cli
-// --- MTRGEN ---
+--- MTRGEN ---
+name: command
+filename: <% commandName="test"|upperFirst %>Command.php
+path: src/Mtrgen/cli
+--- MTRGEN ---
 <?php
 
 declare(strict_types=1);

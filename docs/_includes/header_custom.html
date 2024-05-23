@@ -1,0 +1,18 @@
+<button class="btn" id="darkThemeToggle" className="text-decoration-none">🌕</button>
+
+<script>
+    const darkThemeToggle = document.getElementById('darkThemeToggle');
+    darkThemeToggle.addEventListener('click', () => {
+        if (jtd.getTheme() === 'dark') {
+            jtd.setTheme('light');
+            darkThemeToggle.innerText = '🌑';
+            localStorage.setItem('theme', 'light');
+            document.documentElement.classList.remove('dark');
+        } else {
+            jtd.setTheme('dark');
+            darkThemeToggle.innerText = '🌕';
+            localStorage.setItem('theme', 'dark');
+            document.documentElement.classList.add('dark');
+        }
+    });
+</script>

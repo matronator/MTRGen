@@ -1,2 +1,17 @@
 <link rel="stylesheet" href="{{ '/assets/css/custom.css' | relative_url }}">
 <meta name="monetization" content="$coil.xrptipbot.com/qwoCBFTsQ9GW8cy-uk-c8g">
+
+<script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+            jtd.setTheme('dark');
+            darkThemeToggle.innerText = '🌕';
+            document.documentElement.classList.add('dark');
+        } else {
+            jtd.setTheme('light');
+            darkThemeToggle.innerText = '🌑';
+            document.documentElement.classList.remove('dark');
+        }
+    });
+</script>

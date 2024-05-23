@@ -1,8 +1,8 @@
-// --- MTRGEN ---
-// name: js-template
-// filename: <% name="MyTemplate"|lower %>.js
-// path: assets/js
-// --- MTRGEN ---
+--- MTRGEN ---
+name: js-template
+filename: <% name="MyTemplate"|lower %>.js
+path: assets/js
+--- MTRGEN ---
 document.addEventListener('<% event="event"|truncate:20 %>', function() {
     var template = document.querySelector('#<% id="myId" %>');
     var templateContent = template.content;
