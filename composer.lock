@@ -535,16 +535,16 @@
         },
         {
             "name": "nette/php-generator",
-            "version": "v4.1.6",
+            "version": "v4.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/php-generator.git",
-                "reference": "c90961e782ae86e517fe5ed732eb2b512945565b"
+                "reference": "d201c9bc217e0969d1b678d286be49302972fb56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/php-generator/zipball/c90961e782ae86e517fe5ed732eb2b512945565b",
-                "reference": "c90961e782ae86e517fe5ed732eb2b512945565b",
+                "url": "https://api.github.com/repos/nette/php-generator/zipball/d201c9bc217e0969d1b678d286be49302972fb56",
+                "reference": "d201c9bc217e0969d1b678d286be49302972fb56",
                 "shasum": ""
             },
             "require": {
@@ -588,7 +588,7 @@
                     "homepage": "https://nette.org/contributors"
                 }
             ],
-            "description": "🐘 Nette PHP Generator: generates neat PHP code for you. Supports new PHP 8.3 features.",
+            "description": "🐘 Nette PHP Generator: generates neat PHP code for you. Supports new PHP 8.4 features.",
             "homepage": "https://nette.org",
             "keywords": [
                 "code",
@@ -598,9 +598,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/php-generator/issues",
-                "source": "https://github.com/nette/php-generator/tree/v4.1.6"
+                "source": "https://github.com/nette/php-generator/tree/v4.1.7"
             },
-            "time": "2024-09-10T09:31:55+00:00"
+            "time": "2024-11-29T01:41:18+00:00"
         },
         {
             "name": "nette/safe-stream",
