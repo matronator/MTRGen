@@ -604,24 +604,24 @@
         },
         {
             "name": "nette/safe-stream",
-            "version": "v3.0.1",
+            "version": "v3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/safe-stream.git",
-                "reference": "b9a275f7f2517cacac6ab4360a73722340478bce"
+                "reference": "49a4924a761b053259a720633808305178376443"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/safe-stream/zipball/b9a275f7f2517cacac6ab4360a73722340478bce",
-                "reference": "b9a275f7f2517cacac6ab4360a73722340478bce",
+                "url": "https://api.github.com/repos/nette/safe-stream/zipball/49a4924a761b053259a720633808305178376443",
+                "reference": "49a4924a761b053259a720633808305178376443",
                 "shasum": ""
             },
             "require": {
-                "php": "8.0 - 8.3"
+                "php": "8.0 - 8.4"
             },
             "require-dev": {
                 "nette/tester": "^2.4",
-                "phpstan/phpstan": "^0.12",
+                "phpstan/phpstan": "^2",
                 "tracy/tracy": "^2.8"
             },
             "type": "library",
@@ -666,9 +666,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/safe-stream/issues",
-                "source": "https://github.com/nette/safe-stream/tree/v3.0.1"
+                "source": "https://github.com/nette/safe-stream/tree/v3.0.2"
             },
-            "time": "2023-08-05T18:54:54+00:00"
+            "time": "2025-01-01T21:32:26+00:00"
         },
         {
             "name": "nette/utils",
