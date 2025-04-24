@@ -1,0 +1,9 @@
+{
+  "$schema": "https://files.matronator.com/public/mtrgen/latest/mtrgen-template-schema.json",
+  "name": "lolec3",
+  "filename": "Jason",
+  "path": "app/",
+  "file": {
+    "strict": true
+  }
+}

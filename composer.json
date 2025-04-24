@@ -37,14 +37,14 @@
         "symfony/validator": "^6.2 || ^7.0",
         "nette/finder": "^3.0",
         "opis/json-schema": "^2.3",
-        "matronator/parsem": "^3.1",
+        "matronator/parsem": "^3.2",
         "guzzlehttp/guzzle": "^7.5"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
         "platform": {
-			"php": "8.2"
+			"php": "8.1"
 		}
     },
     "funding": [
