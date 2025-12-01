@@ -2,7 +2,7 @@
 name: e3-controller
 filename: <% entity|upperFirst %>Controller.php
 path: /Users/matronator/Documents/Work/blueghost.nosync/eshop-3/back/src/Controller/Admin
---- MTRGEN ---
+--- /MTRGEN ---
 <?php
 
 namespace App\Controller\Admin;

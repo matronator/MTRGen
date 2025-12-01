@@ -13,11 +13,11 @@ use Tester\TestCase;
 class GeneratorTest extends TestCase
 {
     public const TEST_TEMPLATE = <<<EOT
-// --- MTRGEN ---
-// name: js-template
-// filename: <% name %>.js
-// path: assets/js
-// --- MTRGEN ---
+--- MTRGEN ---
+name: js-template
+filename: <% name %>.js
+path: assets/js
+--- /MTRGEN ---
 
 document.addEventListener('<% event %>', function() {
     var template = document.querySelector('#<% id="myId" %>');
@@ -85,7 +85,7 @@ EOT;
     {
         $expected = static::PARSED_TEMPLATE;
 
-        Generator::writeFiles(Generator::parseAnyFile('../templates/js-template.mtr.js', [
+        Generator::writeFiles(Generator::parseAnyFile('../templates/js-template.js.mtr', [
             'name' => 'my-template',
             'event' => 'DOMContentLoaded',
             'id' => 'my-template',
@@ -98,7 +98,7 @@ EOT;
     {
         $expected = static::PARSED_FILE;
 
-        Generator::writeFiles(Generator::parseAnyFile('../templates/Command.mtr.php', [
+        Generator::writeFiles(Generator::parseAnyFile('../templates/Command.php.mtr', [
             'namespace' => '\Cli',
             'commandName' => 'hello',
             'commandAliases' => 'hi',

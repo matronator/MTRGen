@@ -6,11 +6,12 @@ use Matronator\Mtrgen\ClassicFileGenerator;
 use Matronator\Mtrgen\GenericFileObject;
 use Matronator\Mtrgen\Store\Path;
 use Matronator\Mtrgen\Template\TemplateHeader;
+use Matronator\Parsem\Config\PatternsOption;
 use Matronator\Parsem\Parser;
 
 class Generator
 {
-    public const HEADER_PATTERN = '/^\S+ --- MTRGEN ---.(.+)\s\S+ --- MTRGEN ---/ms';
+    public const HEADER_PATTERN = '/^--- MTRGEN ---(.+)--- \/MTRGEN ---/ms';
 
     public const COMMENT_PATTERN = '/\/\*\s?([a-zA-Z0-9_]+)\|?(([a-zA-Z0-9_]+?)(?:\:(?:(?:\'|")?\w(?:\'|")?,?)+?)*?)?\s?\*\//m';
 
@@ -22,7 +23,7 @@ class Generator
             throw new \RuntimeException(sprintf('File "%s" was not found', $path));
         }
 
-        $parsed = Parser::parseString($file, $arguments, $useCommentSyntax !== false ? self::COMMENT_PATTERN : null);
+        $parsed = Parser::parseString($file, $arguments, false, new PatternsOption(null, null, $useCommentSyntax !== false ? self::COMMENT_PATTERN : null));
 
         $header = static::getTemplateHeader($parsed);
         $parsed = static::removeHeader($parsed);
@@ -53,7 +54,7 @@ class Generator
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 
-        file_put_contents(Path::safe(str_ends_with($file->directory, DIRECTORY_SEPARATOR) 
+        file_put_contents(Path::safe(str_ends_with($file->directory, DIRECTORY_SEPARATOR)
             ? $file->directory . $file->filename
             : $file->directory . DIRECTORY_SEPARATOR . $file->filename), $file->contents);
     }
@@ -85,6 +86,9 @@ class Generator
         $info = [];
         foreach ($lines as $line) {
             $line = trim($line, " /\t\n\r\0\x0B\\");
+            if ($line === '') {
+                continue;
+            }
             $keyValue = explode(':', $line);
             $key = trim($keyValue[0]);
             $value = trim($keyValue[1]);
