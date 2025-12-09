@@ -8,11 +8,11 @@
 [![Total Downloads](https://poser.pugx.org/matronator/mtrgen/downloads)](https://packagist.org/packages/matronator/mtrgen)
 [![License](https://poser.pugx.org/matronator/mtrgen/license)](https://packagist.org/packages/matronator/mtrgen)
 
-#### [Official Website](https://www.mtrgen.com) | [Documentation](https://mtrgen.matronator.cz/public/docs/) | [Template Repository](https://www.mtrgen.com/repository)
+#### [Official Website](https://mtrgen.matronator.cz) | [Documentation](https://mtrgen.matronator.cz/public/docs/) | [Template Repository](https://mtrgen.matronator.cz/repository)
 
 File generator for source code files.
 
-MTRGen is a CLI tool that can be used in any project and generate files in any language. Create your own templates or use templates from the [online repository](https://www.mtrgen.com/repository). MTRGen is a great tool for generating boilerplate code, but it can also be used to generate any other type of file.
+MTRGen is a CLI tool that can be used in any project and generate files in any language. Create your own templates or use templates from the [online repository](https://mtrgen.matronator.cz/repository). MTRGen is a great tool for generating boilerplate code, but it can also be used to generate any other type of file.
 
 ## Requirements
 
@@ -45,7 +45,7 @@ If you can't or don't want to update composer, use version `"^1.0"` of this pack
 
 ## Documentation
 
-[Read the full documentation here](https://www.mtrgen.com/docs/) *- needs to be updated to version 2!*
+[Read the full documentation here](https://mtrgen.matronator.cz/docs) *- needs to be updated to version 2!*
 
 ## Quickstart
 

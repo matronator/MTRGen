@@ -1,5 +1,6 @@
 markdown: kramdown
-remote_theme: just-the-docs/just-the-docs
+# remote_theme: just-the-docs/just-the-docs
+theme: just-the-docs
 color_scheme: dark
 
 kramdown:
@@ -12,14 +13,15 @@ compress_html:
 
 baseurl: /docs
 source: .
-destination: ./../docs
+destination: ./../_docs
+permalink: pretty
 
 enable_copy_code_button: true
 
 # Jekyll SEO
 title: "MTRGen Docs"
 tagline: "PHP file generator"
-description: "File generator engine that can generate PHP files from JSON/YAML/NEON templates."
+description: "Generate files from templates with ease."
 author:
   name: Matronator
   url: https://matronator.cz
@@ -35,12 +37,12 @@ aux_links:
   "View on GitHub":
     "//github.com/matronator/MTRGen"
   "Main website":
-    "//"
+    "//mtrgen.matronator.cz"
 heading_anchors: true
 
 nav_external_links:
   - title: "Main website"
-    url: "https://mtrgen.com"
+    url: "https://mtrgen.matronator.cz"
   - title: "View on GitHub"
     url: "https://github.com/matronator/MTRGen"
 

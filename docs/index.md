@@ -1,17 +1,28 @@
 ---
 nav_order: 1
 title: Introduction
+layout: home
 ---
 
 # MTRGen
 
-![MTRGen Logo](assets/images/logo.png)
+![MTRGen Logo](/docs/assets/images/logo.png)
 
-File generator engine that can generate files of any format from templates. Templates can be any file format (JavaScript, PHP, TypeScript, Python, etc.) and will generate files in the same format. MTRGen also supports legacy JSON/YAML/NEON templates for generating PHP files.
+*Generate files from templates with ease.*
+
+[![Latest Stable Version](https://poser.pugx.org/matronator/mtrgen/v)](https://packagist.org/packages/matronator/mtrgen)
+[![Total Downloads](https://poser.pugx.org/matronator/mtrgen/downloads)](https://packagist.org/packages/matronator/mtrgen)
+[![License](https://poser.pugx.org/matronator/mtrgen/license)](https://packagist.org/packages/matronator/mtrgen)
+
+#### [Official Website](https://mtrgen.matronator.cz) | [Documentation](https://mtrgen.matronator.cz/public/docs/) | [Template Repository](https://mtrgen.matronator.cz/repository)
+
+File generator for source code files.
+
+MTRGen is a CLI tool that can be used in any project and generate files in any language. Create your own templates or use templates from the [online repository](https://mtrgen.matronator.cz/repository). MTRGen is a great tool for generating boilerplate code, but it can also be used to generate any other type of file.
 
 ## Requirements
 
-- PHP >= 7.4
+- PHP >= 8.1
 - Composer
 
 ## Instalation
@@ -19,7 +30,7 @@ File generator engine that can generate files of any format from templates. Temp
 Install with Composer:
 
 ```
-composer require matronator/mtrgen --dev
+composer require matronator/mtrgen
 ```
 
 #### Troubleshooting
@@ -27,7 +38,7 @@ composer require matronator/mtrgen --dev
 If you get this error when trying to install:
 
 ```
-matronator/mtrgen requires composer-runtime-api ^2.2 -> found composer-runtime-api[2.1.0] but it does not match the constraint.
+matronator/mtrgen v1.0.0 requires composer-runtime-api ^2.2 -> found composer-runtime-api[2.1.0] but it does not match the constraint.
 ```
 
 Run this command to update composer to the latest version:
@@ -36,11 +47,17 @@ Run this command to update composer to the latest version:
 composer self-update
 ```
 
+If you can't or don't want to update composer, use version `"^1.0"` of this package as that doesn't depend on Composer runtime API 2.2.
+
+## Documentation
+
+[Read the full documentation here](https://mtrgen.matronator.cz/docs) *- needs to be updated to version 2!*
+
 ## Quickstart
 
-You run the script from terminal using this command:
+Here are some examples of commands you can run with MTRGen:
 
-```
+```bash
 # To list all available commands
 vendor/bin/mtrgen list
 
@@ -48,28 +65,36 @@ vendor/bin/mtrgen list
 vendor/bin/mtrgen generate --help
 vendor/bin/mtrgen gen -h
 
-# Generate from file (any format)
-vendor/bin/mtrgen generate --path=my/folder/component.js.mtr
-vendor/bin/mtrgen gen -p my/folder/template.php.mtr
+# Generate from file
+vendor/bin/mtrgen generate --path=my/folder/template.json
+vendor/bin/mtrgen gen -p my/folder/template.json
 
-# Generate from the local store
+# Generate from the global store
 vendor/bin/mtrgen generate TemplateName
 
-# Save a template to the local store
-vendor/bin/mtrgen save path/to/template.js.mtr
-vendor/bin/mtrgen s path/to/template.php.mtr
+# Download template from the online repository and save it to the global store
+vendor/bin/mtrgen add vendor/template
+vendor/bin/mtrgen a vendor/template
+
+# Save a template to the global store
+vendor/bin/mtrgen save path/to/template.json
+vendor/bin/mtrgen s path/to/template.json
 
 # Optionally provide an alias to save the template under
-vendor/bin/mtrgen save path/to/template.js.mtr --alias=NewName
+vendor/bin/mtrgen save path/to/template.json --alias=NewName
 
-# Remove a template from the local store
+# Save a bundle to the global store
+vendor/bin/mtrgen save-bundle BundleName path/to/template1.json path/to/template2.json
+vendor/bin/mtrgen sb BundleName path/to/template1.json path/to/template2.json
+
+# Remove a template from the global store
 vendor/bin/mtrgen remove TemplateName
-vendor/bin/mtrgen r TemplateName
+vendor/bin/mtrgen rm TemplateName
+
+# Repair the global store (remove all templates that don't exist)
+vendor/bin/mtrgen repair
+vendor/bin/mtrgen r
 ```
-
-## Acknowledgement
-
-This project uses [Pars'Em](https://github.com/matronator/parsem) for template parsing and variable substitution. For legacy PHP file generation, it uses [Nette](https://nette.org)'s [`php-generator`](https://github.com/nette/php-generator) package.
 
 ## License
 

@@ -13,7 +13,7 @@ Generator templates (or just templates) describe the structure of the generated 
 
 1. **Modern templates**: Any file format (JavaScript, PHP, TypeScript, Python, etc.) that can generate files in the same format. These templates use a header block to define metadata and use template variables for dynamic content.
 
-2. **Legacy templates**: JSON/YAML/NEON files that generate PHP files. These templates conform to a JSON schema and are used for generating PHP classes, interfaces, and traits. (*See [Template Structure](template-structure.md) for more details on legacy templates.*)
+2. **Legacy templates**: JSON/YAML/NEON files that generate PHP files. These templates conform to a JSON schema and are used for generating PHP classes, interfaces, and traits. (*See [Template Structure](template-structure) for more details on legacy templates.*)
 
 {: .tip }
 > It is recommended to name your templates with a `.mtr` extension (eg. `component.js.mtr`, `entity.php.mtr`). The `.mtr` extension helps identify template files and enables syntax highlighting in editors. The [MTRGen Templates Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=matronator.mtrgen-yaml-templates) VSCode extension provides syntax highlighting and snippets for `*.mtr` files.

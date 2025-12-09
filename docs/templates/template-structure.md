@@ -8,12 +8,12 @@ parent: Templates
 # Template structure
 
 {: .warning }
-> This page describes **legacy templates** - JSON/YAML/NEON files that generate PHP files. For modern templates (any file format), see the [Templates Overview](../templates/index.md).
+> This page describes **legacy templates** - JSON/YAML/NEON files that generate PHP files. For modern templates (any file format), see the [Templates Overview](../).
 
 Legacy templates are YAML, JSON or NEON files that generate PHP files. All legacy templates must follow the same structure, which is defined in a JSON schema. You can find the full schema here: [mtrgen-template-schema.json](https://www.mtrgen.com/storage/schemas/template/latest/mtrgen-template-schema.json)
 
 {: .note }
-> Modern templates (any file format) don't use this schema. They simply use a header block and template variables directly in the file content. See the [Templates Overview](../templates/index.md) for more information.
+> Modern templates (any file format) don't use this schema. They simply use a header block and template variables directly in the file content. See the [Templates Overview](../) for more information.
 
 Here is a simplified version of the schema in YAML format for better readability.
 

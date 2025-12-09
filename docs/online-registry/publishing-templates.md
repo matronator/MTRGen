@@ -86,11 +86,11 @@ If you don't want to use the CLI tool, you can also create an account using the 
 
 #### Create an account and login
 
-![Step 1 - Find the Sign-up button](../assets/images/step-1-signup-button.png)
+![Step 1 - Find the Sign-up button](/docs/assets/images/step-1-signup-button.png)
 
 Just go to [https://mtrgen.com](https://mtrgen.com) and click on the `Sign-up` button in the top right corner. You'll be redirected to the sign-up page where you can create your account.
 
-![Step 2 - Create an account](../assets/images/step-2-signup.png)
+![Step 2 - Create an account](/docs/assets/images/step-2-signup.png)
 
 After your account is created, you can login to the website and navigate to the `Profile` page.
 
@@ -98,7 +98,7 @@ After your account is created, you can login to the website and navigate to the 
 
 On the profile page, navigate to `Publish` using the side menu on the left and there you can upload and publish your template.
 
-![Step 3 - Publish the template](../assets/images/step-3-publish.png)
+![Step 3 - Publish the template](/docs/assets/images/step-3-publish.png)
 
 And that's it! Your template is now available to everyone (if you didn't set it as private) on the online registry.
 
@@ -108,5 +108,5 @@ After you publish the template, the identifier for the template will be construc
 
 {: .note-title }
 > Example
-> 
+>
 > So if your username is `hunter2` and you have set the `name` inside your template to be `my-cool-template`, the identifier under which it will be available to others after publishing will be `hunter2/my-cool-template`.
