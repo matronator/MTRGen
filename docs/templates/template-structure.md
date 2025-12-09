@@ -7,7 +7,13 @@ parent: Templates
 
 # Template structure
 
-As mentioned earlier, the template parser supports YAML, JSON and NEON files, so you can write your templates using any of these formats. All templates must follow the same structure, which is defined in a JSON schema. You can find the full schema here: [mtrgen-template-schema.json](https://www.mtrgen.com/storage/schemas/template/latest/mtrgen-template-schema.json)
+{: .warning }
+> This page describes **legacy templates** - JSON/YAML/NEON files that generate PHP files. For modern templates (any file format), see the [Templates Overview](../templates/index.md).
+
+Legacy templates are YAML, JSON or NEON files that generate PHP files. All legacy templates must follow the same structure, which is defined in a JSON schema. You can find the full schema here: [mtrgen-template-schema.json](https://www.mtrgen.com/storage/schemas/template/latest/mtrgen-template-schema.json)
+
+{: .note }
+> Modern templates (any file format) don't use this schema. They simply use a header block and template variables directly in the file content. See the [Templates Overview](../templates/index.md) for more information.
 
 Here is a simplified version of the schema in YAML format for better readability.
 

@@ -31,7 +31,7 @@ class RemoveTemplateCommand extends Command
 
         $storage = new Storage;
         if ($storage->remove($name)) {
-            $output->writeln("<fg=red>Template '$name' removed!</>");
+            $output->writeln("<fg=green>Template '$name' removed!</>");
             $io->newLine();
 
             return self::SUCCESS;

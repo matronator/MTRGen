@@ -31,7 +31,7 @@ vendor/bin/mtrgen generate vendor/template
 
 If you just want to generate a file from a template in the online registry one-time only and don't want to add it to your local store, you can use the `use` command. This command works just like the `generate` command, except it takes an identifier as an argument and searches the online registry instead of your local store.
 
-When it finds the template, it will prompt you to provide arguments for the template (if there are any) and generates the PHP file without saving the template in your local store. This is useful if you just want to use a template one time and know you won't be needing it in the future again.
+When it finds the template, it will prompt you to provide arguments for the template (if there are any) and generates the file without saving the template in your local store. This is useful if you just want to use a template one time and know you won't be needing it in the future again. The generated file format depends on the template (modern templates can generate any format, legacy templates generate PHP files).
 
 ### Using the `use` command
 

@@ -2,7 +2,7 @@
 // name: list-page-builder
 // filename: <% entity|upperFirst %>ListPageBuilder.php
 // path: /Users/matronator/Documents/Work/blueghost.nosync/eshop-3/back/src/Service/Event
-// --- MTRGEN ---
+// --- /MTRGEN ---
 <?php
 
 namespace App\Service\Event;

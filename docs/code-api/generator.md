@@ -7,129 +7,128 @@ parent: API
 
 # `Generator` class
 
-This code provides a `Generator` class for parsing, generating, and manipulating PHP files. It handles various PHP constructs such as namespaces, classes, interfaces, traits, and more. Additionally, it can detect reserved keywords and make names safe for use in generated code.
+{: .warning }
+> This page documents the modern `Generator` class for parsing templates of any file format. For legacy PHP generation from JSON/YAML/NEON templates, see the `ClassicGenerator` class.
+
+The `Generator` class provides functionality for parsing modern templates (any file format) and generating files. It uses [Pars'Em](https://github.com/matronator/parsem) for template parsing and variable substitution.
 
 - [Important Classes](#important-classes)
-  - [FileObject](#fileobject)
-  - [PhpFile](#phpfile)
+  - [GenericFileObject](#genericfileobject)
+  - [TemplateHeader](#templateheader)
 - [Constants](#constants)
 - [Methods](#methods)
-  - [`isBundle`](#isbundlestring-path-string-contents--null-bool)
-  - [`parse`](#parsestring-filename-string-contents-array-arguments-fileobject)
-  - [`parseFile`](#parsefilestring-path-array-arguments-fileobject)
-  - [`generateFile`](#generatefileobject-parsed-array-arguments-fileobject)
-  - [`getName`](#getnamestring-path-string-contents--null-string)
-  - [`generate`](#generateobject-body-array-args-phpfile)
-  - [`is`](#ismixed-subject-bool)
-  - [`isReservedKeyword`](#isreservedkeywordstring-name-bool)
-  - [`makeNameSafe`](#makenamesafestring-name-string)
+  - [`parseAnyFile`](#parseanyfilestring-path-array-arguments--bool-usec commentsyntax--false-genericfileobject)
+  - [`writeFiles`](#writefilesgenericfileobject--genericfileobject-files-void)
+  - [`getName`](#getnamestring-content--null-string-path--null-string)
+  - [`getTemplateHeader`](#gettemplateheaderstring-content-templateheader)
+  - [`removeHeader`](#removeheaderstring-content-string)
 
 ## Important Classes
 
-### FileObject
+### GenericFileObject
 
-`Matronator\Mtrgen\FileObject` is the main data structure for the parsed templates. It contains all the information about the file that is needed for writing it to the disk.
+`Matronator\Mtrgen\GenericFileObject` is the main data structure for parsed modern templates. It contains all the information about the file that is needed for writing it to the disk.
 
 ```php
-class FileObject
+namespace Matronator\Mtrgen;
+
+class GenericFileObject
 {
-    public PhpFile $contents;
+    public string $contents;  // The file contents as a string
+    public string $filename;  // The output filename (including extension)
+    public string $directory; // The output directory path
 
-    public string $filename;
-
-    public string $directory;
-
-    public ?string $entity = null;
-
-    public function __construct(string $directory, string $filename, PhpFile $contents, ?string $entity = null) {
-        $this->filename = $filename . '.php';
+    public function __construct(string $directory, string $filename, string $contents) {
+        $this->filename = $filename;
         $this->contents = $contents;
         $this->directory = $directory;
-        $this->entity = $entity;
     }
 }
 ```
 
-### PhpFile
+### TemplateHeader
 
-`Nette\PhpGenerator\PhpFile` is a class from the [Nette](https://nette.org) [PHP Generator library](https://github.com/nette/php-generator). It is used to represent a PHP file and its contents. It is used by the `Generator` class for generating the parsed templates.
+`Matronator\Mtrgen\Template\TemplateHeader` represents the metadata header of a template file.
 
-Constants
----------
+```php
+namespace Matronator\Mtrgen\Template;
 
--   `RESERVED_KEYWORDS`: An array of reserved keywords in PHP.
--   `RESERVED_CONSTANTS`: An array of reserved constants in PHP.
+class TemplateHeader
+{
+    public string $name;     // Template name (for storage/identification)
+    public string $filename;  // Output filename (can use template variables)
+    public string $path;     // Output directory path (can use template variables)
 
-Methods
--------
+    public function __construct(string $name, string $filename, string $path);
+    public static function fromArray(array $array): static;
+}
+```
 
-### `isBundle(string $path, ?string $contents = null): bool`
+## Constants
 
-Checks if a given template is a bundle.
+-   `HEADER_PATTERN`: Regular expression pattern for matching the template header block (`/^--- MTRGEN ---(.+)--- \/MTRGEN ---/ms`).
+-   `COMMENT_PATTERN`: Regular expression pattern for matching comment-based template variables (for use with `useCommentSyntax` option).
 
--   `$path`: The path of the template file.
--   `$contents`: (optional) The contents of the template file.
--   Returns: A boolean indicating whether the template is a bundle.
+## Methods
 
-### `parse(string $filename, string $contents, array $arguments): FileObject`
+### `parseAnyFile(string $path, array $arguments = [], bool $useCommentSyntax = false): GenericFileObject`
 
-Parses and generates a `FileObject` from string content and a filename.
+Parses a template file of any format and returns a `GenericFileObject` ready to be written to disk.
 
--   `$filename`: The filename of the file to parse.
--   `$contents`: The contents of the file to parse.
--   `$arguments`: An array of arguments for parsing.
--   Returns: A `FileObject` representing the parsed file.
+-   `$path`: The path to the template file.
+-   `$arguments`: (optional) An array of arguments to pass to the template variables.
+-   `$useCommentSyntax`: (optional) If `true`, uses comment-based syntax (`/*variable*/`) instead of `<%variable%>` syntax.
+-   Returns: A `GenericFileObject` representing the parsed file.
 
-### `parseFile(string $path, array $arguments): FileObject`
+**Example:**
 
-Parses and generates a `FileObject` from a file.
+```php
+$file = Generator::parseAnyFile('component.js.mtr', [
+    'name' => 'MyComponent',
+    'event' => 'click'
+]);
+// $file->filename will be "MyComponent.js" (from header)
+// $file->directory will be the path from header
+// $file->contents will be the parsed template content
+```
 
--   `$path`: The path to the file to parse.
--   `$arguments`: An array of arguments for parsing.
--   Returns: A `FileObject` representing the parsed file.
+### `writeFiles(GenericFileObject|GenericFileObject[] $files): void`
 
-### `generateFile(object $parsed, array $arguments): FileObject`
+Writes one or more parsed file objects to disk. Creates directories if they don't exist.
 
-Generates a `FileObject` from a parsed object.
+-   `$files`: A single `GenericFileObject` or an array of `GenericFileObject` instances.
 
--   `$parsed`: The parsed object.
--   `$arguments`: An array of arguments for generating the file.
--   Returns: A `FileObject` representing the generated file.
+**Example:**
 
-### `getName(string $path, ?string $contents = null): string`
+```php
+// Write a single file
+Generator::writeFiles($file);
 
-Gets the name of the template from a file.
+// Write multiple files
+Generator::writeFiles([$file1, $file2, $file3]);
+```
 
--   `$path`: The path of the template file.
--   `$contents`: (optional) The contents of the template file.
--   Returns: The name of the template.
+### `getName(?string $content = null, ?string $path = null): string`
 
-### `generate(object $body, array $args): PhpFile`
+Gets the template name from the header. Either `$content` or `$path` must be provided.
 
-Generates a `PhpFile` from a parsed object.
+-   `$content`: (optional) The template file contents.
+-   `$path`: (optional) The path to the template file.
+-   Returns: The template name from the header.
+-   Throws: `RuntimeException` if neither `$content` nor `$path` is provided, or if the header is missing required fields.
 
--   `$body`: The parsed object.
--   `$args`: An array of arguments for generating the file.
--   Returns: A `PhpFile` representing the generated file.
+### `getTemplateHeader(string $content): TemplateHeader`
 
-### `is(mixed &$subject): bool`
+Extracts and parses the template header from the file content.
 
-Shorthand for checking if a variable is set and not empty.
+-   `$content`: The template file contents (including the header).
+-   Returns: A `TemplateHeader` object with `name`, `filename`, and `path` properties.
+-   Throws: `RuntimeException` if the header is missing required properties.
 
--   `$subject`: The variable to check.
--   Returns: A boolean indicating whether the variable is set and not empty.
+### `removeHeader(string $content): string`
 
-### `isReservedKeyword(string $name): bool`
+Removes the template header block from the file content, returning only the template body.
 
-Checks if the given name is a reserved keyword.
-
--   `$name`: The name to check.
--   Returns: A boolean indicating whether the name is a reserved keyword.
-
-### `makeNameSafe(string $name): string`
-
-Makes the given name safe by adding an underscore if it is a reserved keyword.
-
--   `$name`: The name to make safe.
--   Returns: A safe name that doesn't conflict with reserved keywords or constants.
+-   `$content`: The template file contents (including the header).
+-   Returns: The template content without the header block.
 

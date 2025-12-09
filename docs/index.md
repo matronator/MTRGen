@@ -7,7 +7,7 @@ title: Introduction
 
 ![MTRGen Logo](assets/images/logo.png)
 
-File generator engine that can generate PHP files from JSON/YAML/NEON templates.
+File generator engine that can generate files of any format from templates. Templates can be any file format (JavaScript, PHP, TypeScript, Python, etc.) and will generate files in the same format. MTRGen also supports legacy JSON/YAML/NEON templates for generating PHP files.
 
 ## Requirements
 
@@ -48,19 +48,19 @@ vendor/bin/mtrgen list
 vendor/bin/mtrgen generate --help
 vendor/bin/mtrgen gen -h
 
-# Generate from file
-vendor/bin/mtrgen generate --path=my/folder/template.json
-vendor/bin/mtrgen gen -p my/folder/template.json
+# Generate from file (any format)
+vendor/bin/mtrgen generate --path=my/folder/component.js.mtr
+vendor/bin/mtrgen gen -p my/folder/template.php.mtr
 
 # Generate from the local store
 vendor/bin/mtrgen generate TemplateName
 
 # Save a template to the local store
-vendor/bin/mtrgen save path/to/template.json
-vendor/bin/mtrgen s path/to/template.json
+vendor/bin/mtrgen save path/to/template.js.mtr
+vendor/bin/mtrgen s path/to/template.php.mtr
 
 # Optionally provide an alias to save the template under
-vendor/bin/mtrgen save path/to/template.json --alias=NewName
+vendor/bin/mtrgen save path/to/template.js.mtr --alias=NewName
 
 # Remove a template from the local store
 vendor/bin/mtrgen remove TemplateName
@@ -69,7 +69,7 @@ vendor/bin/mtrgen r TemplateName
 
 ## Acknowledgement
 
-This project would not be possible without [Nette](https://nette.org)'s [`php-generator`](https://github.com/nette/php-generator) package, which is used for the final code generation itself to output the finished PHP file.
+This project uses [Pars'Em](https://github.com/matronator/parsem) for template parsing and variable substitution. For legacy PHP file generation, it uses [Nette](https://nette.org)'s [`php-generator`](https://github.com/nette/php-generator) package.
 
 ## License
 

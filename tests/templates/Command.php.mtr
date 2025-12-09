@@ -14,9 +14,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class <% commandName|upperFirst %>Command extends BaseGeneratorCommand
+class <% commandName="test"|upperFirst %>Command extends BaseGeneratorCommand
 {
-    protected static $defaultName = '<% commandName|lower %>';
+    protected static $defaultName = '<% commandName="test"|lower %>';
     protected static $defaultDescription = '<% commandDescription %>';
 
     public function configure(): void

@@ -229,10 +229,10 @@ class Storage
      */
     public function getFullPath(string $name): ?string
     {
-        if ($this->getFilename($name) === null)
+        if (is_null($filename = $this->getFilename($name)))
             return null;
 
-        return Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $this->getFilename($name));
+        return Path::canonicalize($this->templateDir . DIRECTORY_SEPARATOR . $filename);
     }
 
     /**

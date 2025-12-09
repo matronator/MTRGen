@@ -26,7 +26,10 @@ Here is a list of all the commands the CLI utility supports (excluding default `
 
 ## `generate`, `gen` (default)
 
-The `generate` command is the default command of the CLI tool, meaning it will be run if no command is provided (eg. `vendor/bin/mtrgen` or with some parameters: `vendor/bin/mtrgen -p my/path/to/file.json`). It is used for generating PHP files from a template or a bundle.
+The `generate` command is the default command of the CLI tool, meaning it will be run if no command is provided (eg. `vendor/bin/mtrgen` or with some parameters: `vendor/bin/mtrgen -p my/path/to/file.js.mtr`). It is used for generating files from a template or a bundle. The generated file format depends on the template:
+
+- **Modern templates**: Can generate files of any format (JavaScript, PHP, TypeScript, etc.) - the output format is determined by the `filename` field in the template header.
+- **Legacy templates**: Generate PHP files from JSON/YAML/NEON templates.
 
 ### Usage
 
@@ -43,7 +46,23 @@ gen # Alias
 
 ### Options
 
-`-p, --path` - The path to a template file. You can use this instead of the `name` argument.
+`-p, --path` - The path to a template file. You can use this instead of the `name` argument. Works with both modern templates (any file format) and legacy templates (JSON/YAML/NEON).
+
+### Examples
+
+```sh
+# Generate from a modern JavaScript template
+vendor/bin/mtrgen generate --path=component.js.mtr name=MyComponent
+
+# Generate from a modern PHP template
+vendor/bin/mtrgen generate --path=command.php.mtr commandName=validate
+
+# Generate from a legacy YAML template (generates PHP)
+vendor/bin/mtrgen generate --path=entity.yaml name=User
+
+# Generate from a saved template
+vendor/bin/mtrgen generate MyTemplate name=Test
+```
 
 ## `save`, `s`
 

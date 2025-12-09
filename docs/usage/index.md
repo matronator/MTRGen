@@ -28,15 +28,39 @@ vendor/bin/mtrgen generate --path=my.template.yaml name=Hello anotherArg=app/ent
 
 You can also use the tool in your code. There are several classes that you are most likely to use:
 
-- [`Matronator\Mtrgen\Template\Generator`](./../code-api/generator.md) - This class is used for parsing the templates into file objects.
-- `Matronator\Mtrgen\FileGenerator` - This class is used for writing parsed file objects to actual files.
+- [`Matronator\Mtrgen\Template\Generator`](./../code-api/generator.md) - This class is used for parsing modern templates (any file format) into file objects.
+- `Matronator\Mtrgen\Template\ClassicGenerator` - This class is used for parsing legacy templates (JSON/YAML/NEON) that generate PHP files.
+- `Matronator\Mtrgen\ClassicFileGenerator` - This class is used for writing legacy PHP file objects to actual files.
 - `Matronator\Mtrgen\Registry\Profile` - This class handles everything related to user profiles.
 - `Matronator\Mtrgen\Registry\Connection` - This is the main class for communicating with the online template registry's API.
 - [`Matronator\Mtrgen\Store\Storage`](./../code-api/storage.md) - This handles saving, loading and removing templates and bundles from the local store.
 
-There is also a `Matronator\Mtrgen\FileObject` class that serves as the main data structure for the parsed templates. It contains all the information about the file that is needed for writing it to the disk.
+There are two main file object classes:
 
-#### `FileObject` structure
+#### `GenericFileObject` (Modern Templates)
+
+For modern templates (any file format), the `GenericFileObject` class serves as the main data structure:
+
+```php
+namespace Matronator\Mtrgen;
+
+class GenericFileObject
+{
+    public string $contents;  // The file contents as a string
+    public string $filename;   // The output filename (including extension)
+    public string $directory;  // The output directory path
+
+    public function __construct(string $directory, string $filename, string $contents) {
+        $this->filename = $filename;
+        $this->contents = $contents;
+        $this->directory = $directory;
+    }
+}
+```
+
+#### `PhpFileObject` (Legacy Templates)
+
+For legacy templates that generate PHP files, the `PhpFileObject` class is used:
 
 ```php
 declare(strict_types=1);
@@ -45,14 +69,11 @@ namespace Matronator\Mtrgen;
 
 use Nette\PhpGenerator\PhpFile;
 
-class FileObject
+class PhpFileObject
 {
     public PhpFile $contents;
-
     public string $filename;
-
     public string $directory;
-
     public ?string $entity = null;
 
     public function __construct(string $directory, string $filename, PhpFile $contents, ?string $entity = null) {
@@ -65,4 +86,39 @@ class FileObject
 ```
 
 ### Parsing templates
+
+#### Modern Templates (Any File Format)
+
+For modern templates, use the `Generator::parseAnyFile()` method:
+
+```php
+use Matronator\Mtrgen\Template\Generator;
+
+// Parse a template file
+$file = Generator::parseAnyFile('path/to/template.js.mtr', [
+    'name' => 'MyComponent',
+    'event' => 'click'
+]);
+
+// Write the file to disk
+Generator::writeFiles($file);
+```
+
+#### Legacy Templates (PHP Generation)
+
+For legacy JSON/YAML/NEON templates that generate PHP files, use the `ClassicGenerator` class:
+
+```php
+use Matronator\Mtrgen\Template\ClassicGenerator;
+use Matronator\Mtrgen\ClassicFileGenerator;
+
+// Parse a legacy template
+$file = ClassicGenerator::parseFile('path/to/template.yaml', [
+    'name' => 'MyEntity',
+    'namespace' => 'App\\Entity'
+]);
+
+// Write the PHP file to disk
+ClassicFileGenerator::writeFile($file);
+```
 

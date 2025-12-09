@@ -26,7 +26,6 @@ class GenerateCommand extends BaseGeneratorCommand
     {
         $this->setAliases(['gen']);
         $this->addOption('path', 'p', InputOption::VALUE_REQUIRED, 'Optionally you can provide a path to a template file to generate from that file instead.');
-        $this->addOption('comment-syntax', 'cs', InputOption::VALUE_NONE, 'If set, the comment syntax will be used to generate the file (if the template supports it).');
         $this->addArgument('name', InputArgument::OPTIONAL, 'The name of the template to generate under which it\'s saved in the local store.');
         $this->addArgument('args', InputArgument::IS_ARRAY|InputArgument::OPTIONAL, 'Arguments to pass to the template (\'key=value\' items separated by space).');
     }
@@ -56,7 +55,7 @@ class GenerateCommand extends BaseGeneratorCommand
         if (!$path) {
             $path = $this->askPath($helper);
         }
-        
+
         try {
             $isLegacy = Template::isLegacy($path);
         } catch (TemplateNotFoundException $e) {
@@ -71,15 +70,15 @@ class GenerateCommand extends BaseGeneratorCommand
                 if (!$arguments) {
                     $arguments = $this->askArguments($helper, $path);
                 }
-    
+
                 $output->writeln("Generating file from template <options=bold>{$name}</>...");
                 $this->io->newLine();
-    
+
                 ClassicFileGenerator::writeFile(ClassicGenerator::parseFile($path, $arguments));
             } else {
                 $output->writeln("Generating files from bundle <options=bold>{$name}</>...");
                 $this->io->newLine();
-    
+
                 $bundle = Parser::decodeByExtension($path);
                 $arguments = $this->getArguments($input->getArgument('args'));
                 if (!$arguments) {
@@ -114,12 +113,12 @@ class GenerateCommand extends BaseGeneratorCommand
                 }
             }
             if ($useDefaults) {
-                $arguments = Parser::getArguments($this->getTemplate($path), $input->getOption('comment-syntax') ? Generator::COMMENT_PATTERN : null)->defaults;
+                $arguments = Parser::getArguments($this->getTemplate($path))->defaults;
             } else {
                 $arguments = $this->askArguments($helper, $path);
             }
 
-            $file = Generator::parseAnyFile($path, $arguments, $input->getOption('comment-syntax'));
+            $file = Generator::parseAnyFile($path, $arguments);
 
             $output->writeln("Generating file '{$file->filename}' to '{$file->directory}' from template <options=bold>{$name}</>...");
             $this->io->newLine();

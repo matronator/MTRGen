@@ -64,10 +64,13 @@ Now that your account is created and you've successfully logged in, it's time yo
 Publishing a template is as simple as just running a single command:
 
 ```bash
-vendor/bin/mtrgen publish --path=path/to/your/template.json
+vendor/bin/mtrgen publish --path=path/to/your/template.js.mtr
 # Or a shorter alias
-vendor/bin/mtrgen pub -p path/to/your/template.json
+vendor/bin/mtrgen pub -p path/to/your/template.php.mtr
 ```
+
+{: .note }
+> You can publish templates of any format (modern templates) or legacy JSON/YAML/NEON templates. The template format doesn't matter - as long as it has a valid header, it can be published.
 
 Alternatively if you want to publish a template you already have saved in your local store, just provide the template name instead of the `--path` option, like this:
 

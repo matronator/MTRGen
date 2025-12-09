@@ -9,10 +9,14 @@ has_children: true
 
 ## Introduction
 
-Generator templates (or just templates) describe the structure of the generated file. Templates can be either YAML, JSON or NEON files and they have to conform to a JSON schema. We will talk more about the schema in the next chapter (*see [mtrgen-template-schema.json](template-structure.md#mtrgen-template-schema)*).
+Generator templates (or just templates) describe the structure of the generated file. MTRGen supports two types of templates:
+
+1. **Modern templates**: Any file format (JavaScript, PHP, TypeScript, Python, etc.) that can generate files in the same format. These templates use a header block to define metadata and use template variables for dynamic content.
+
+2. **Legacy templates**: JSON/YAML/NEON files that generate PHP files. These templates conform to a JSON schema and are used for generating PHP classes, interfaces, and traits. (*See [Template Structure](template-structure.md) for more details on legacy templates.*)
 
 {: .tip }
-> It is recommended to name your templates with a `.mtr` suffix after the name right after the extension (eg. `entity.yaml.mtr`). If you do that, the [MTRGen Templates Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=matronator.mtrgen-yaml-templates) VSCode extension, will add syntax highlighting and snippets to all `*.mtr` files.
+> It is recommended to name your templates with a `.mtr` extension (eg. `component.js.mtr`, `entity.php.mtr`). The `.mtr` extension helps identify template files and enables syntax highlighting in editors. The [MTRGen Templates Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=matronator.mtrgen-yaml-templates) VSCode extension provides syntax highlighting and snippets for `*.mtr` files.
 
 ## Template syntax
 
@@ -27,14 +31,17 @@ The header block looks like this:
 ```
 --- MTRGEN ---
 name: template-name
-filename: <% name|firstUpper %>.php
-path: ./app/Controllers
---- MTRGEN ---
+filename: <% name|upperFirst %>.js
+path: ./src/components
+--- /MTRGEN ---
 
-// Rest of the template
+// Rest of the template content
 ```
 
 You can use template variables for the header values, except for the `name` field, which must be known beforehand to be able to correctly save and use the template later.
+
+{: .note }
+> The output filename is defined in the `filename` field of the header. The generated file will have exactly the name you specify here, including the extension. For example, if your template is `component.js.mtr` and the header specifies `filename: <% name %>.js`, the generated file will be `MyComponent.js` (assuming `name` is "MyComponent").
 
 #### Header fields
 
@@ -44,7 +51,7 @@ A unique name of the template to be saved under in the local store. If published
 
 ##### `filename`
 
-The filename of the generated file. Can use template variables to make the filename dynamic.
+The filename of the generated file, including the extension. Can use template variables to make the filename dynamic. The generated file will have exactly this name - for example, if you specify `filename: <% name %>.js`, the output will be a JavaScript file with that name.
 
 ##### `path`
 
@@ -153,6 +160,31 @@ There are a few built-in filters that you can use:
 `random` - Returns a random character from the variable
 
 `truncate` - Truncates the variable to the specified length
+
+## Examples
+
+### Modern Template Example
+
+Here's an example of a modern JavaScript template (`component.js.mtr`):
+
+```javascript
+--- MTRGEN ---
+name: js-component
+filename: <% name|upperFirst %>.js
+path: src/components
+--- /MTRGEN ---
+
+document.addEventListener('<% event="click" %>', function() {
+    var component = document.querySelector('#<% id="myId" %>');
+    component.classList.add('<% className="active"|lower %>');
+});
+```
+
+When you generate this template with arguments like `name=Button event=click id=btn1 className=ACTIVE`, it will create `Button.js` in the `src/components` directory with the variables replaced.
+
+### Legacy Template Example
+
+Legacy templates are JSON/YAML/NEON files that generate PHP files. See the [Template Structure](template-structure.md) page for details on legacy template format.
 
 ## VSCode Extension
 

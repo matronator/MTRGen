@@ -52,7 +52,7 @@ abstract class BaseGeneratorCommand extends Command
         }
 
         $this->io->newLine();
-        $nameQuestion = new ChoiceQuestion('<comment><options=bold>Select the template to generate</>:</comment> ', $choices);
+        $nameQuestion = new ChoiceQuestion('<comment><options=bold>Select the template you want to use</>:</comment> ', $choices);
         $name = $helper->ask($this->input, $this->output, $nameQuestion);
         $this->io->newLine();
 
@@ -125,16 +125,16 @@ abstract class BaseGeneratorCommand extends Command
             if (!$contents) $contents = $template->contents;
             if (!$template || !$contents) {
                 $this->io->error('Template not found.');
-                return Command::FAILURE;
+                return [];
             }
         } else {
             $template = $this->getTemplate($path, $this->io);
             if (!$template) {
                 $this->io->error('Template not found.');
-                return Command::FAILURE;
+                return [];
             }
         }
-        
+
         $this->output->writeln('<fg=green>Template found!</>');
         $this->output->writeln('Looking for template parameters...');
 

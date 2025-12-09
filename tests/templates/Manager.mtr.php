@@ -2,7 +2,7 @@
 // name: e3-manager
 // filename: <% entity|upperFirst %>Manager.php
 // path: /Users/matronator/Documents/Work/blueghost.nosync/eshop-3/back/src/Service/Event
-// --- MTRGEN ---
+// --- /MTRGEN ---
 <?php
 
 namespace App\Service\Event;

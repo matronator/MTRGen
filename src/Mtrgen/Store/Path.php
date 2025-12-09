@@ -171,9 +171,43 @@ class Path
         return __DIR__ . '/../../../';
     }
 
+    /**
+     * Check if a path is absolute (Unix, Windows, or URL scheme).
+     */
+    private static function isAbsolute(string $path): bool
+    {
+        if ($path === '') {
+            return false;
+        }
+
+        $path = self::normalize($path);
+
+        // URL like "phar://", "file://", etc.
+        if (strpos($path, '://') !== false) {
+            return true;
+        }
+
+        // Unix absolute path: starts with "/"
+        if ($path[0] === '/') {
+            return true;
+        }
+
+        // Windows absolute path: "C:/" or "C:\"
+        return \strlen($path) > 1 && ctype_alpha($path[0]) && $path[1] === ':';
+    }
+
     public static function makeAbsolute(string $path): string
     {
-        return self::canonicalize(self::getRoot() . self::canonicalize($path));
+        // Expand and canonicalize first (handles "~" and normalization)
+        $path = self::canonicalize($path);
+
+        // If it's already absolute, just return it
+        if (self::isAbsolute($path)) {
+            return $path;
+        }
+
+        // Otherwise, make it absolute relative to the project root
+        return self::canonicalize(self::getRoot() . $path);
     }
 
     public static function getExtension(string $path): string

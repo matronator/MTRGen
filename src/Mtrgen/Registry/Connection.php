@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Connection
 {
-    public const PROD_URL = 'https://www.mtrgen.com/api';
+    public const PROD_URL = 'https://mtrgen.matronator.cz/api';
     public const DEBUG_URL = 'http://localhost:8000/api';
 
     public string $apiUrl;
@@ -100,20 +100,20 @@ class Connection
     public function postTemplate(string $path, ?OutputInterface $io = null): mixed
     {
         $profile = new Profile;
-        if (!$profile->authenticate())
+        if (!$profile->validate())
             return '<fg=red>You must login first.</>';
 
         $matches = explode(DIRECTORY_SEPARATOR, $path);
         $filename = end($matches);
 
-        $profileObject = $profile->loadProfile();
+        $profile->loadProfile();
 
-        $client = new Client();
+        $client = new Client;
         $storage = new Storage;
         if ($storage->isBundle($filename)) {
             if (!Parser::isValidBundle($path, file_get_contents($path)))
                 return '<fg=red>Invalid bundle.</>';
-            
+
             $templates = [];
             $template = Parser::decodeByExtension($path, file_get_contents($path));
             foreach ($template->templates as $item) {
@@ -124,7 +124,7 @@ class Connection
                 ];
             }
             $body = [
-                'username' => $profileObject->username,
+                'username' => $profile->username,
                 'filename' => $filename,
                 'name' => strtolower($template->name),
                 'contents' => file_get_contents($path),
@@ -133,13 +133,15 @@ class Connection
             $url = $this->apiUrl . '/bundles';
         } else {
             $contents = file_get_contents(Path::makeAbsolute($path));
+            if (!$contents)
+                return '<fg=red>Template not found.</>';
             $isLegacy = Template::isLegacy($path);
             $name = $isLegacy ? ClassicGenerator::getName($path, $contents) : Generator::getName($contents);
             if ($isLegacy && !Parser::isValid(Path::makeAbsolute($path), $contents))
                 return '<fg=red>Invalid template.</>';
-            
+
             $body = [
-                'username' => $profileObject->username,
+                'username' => $profile->username,
                 'filename' => $filename,
                 'name' => strtolower($name),
                 'contents' => $contents,
@@ -157,7 +159,7 @@ class Connection
                 $io->write('.');
             }
         }, 'headers' => [
-            'Authorization' => 'Bearer ' . $profileObject->token,
+            'Authorization' => 'Bearer ' . $profile->token,
         ]]);
 
         if ($io) $io->writeln('');
@@ -174,7 +176,7 @@ class Connection
 
     private function getTemplateDetails(string $url): array
     {
-        $client = new Client();
+        $client = new Client;
         $response = $client->get($url, [
             'headers' => [
                 'X-Requested-By' => 'cli',
