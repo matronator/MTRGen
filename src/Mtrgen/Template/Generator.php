@@ -23,6 +23,11 @@ class Generator
             throw new \RuntimeException(sprintf('File "%s" was not found', $path));
         }
 
+        $defaults = static::getDefaultArguments($file);
+        foreach ($defaults as $key => $value) {
+            $arguments["default:$key"] = $value;
+        }
+
         $parsed = Parser::parseString($file, $arguments, false, new PatternsOption(null, null, $useCommentSyntax !== false ? self::COMMENT_PATTERN : null));
 
         $header = static::getTemplateHeader($parsed);
@@ -54,7 +59,8 @@ class Generator
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 
-        file_put_contents(Path::safe(str_ends_with($file->directory, DIRECTORY_SEPARATOR)
+        file_put_contents(Path::safe(
+            str_ends_with($file->directory, DIRECTORY_SEPARATOR)
             ? $file->directory . $file->filename
             : $file->directory . DIRECTORY_SEPARATOR . $file->filename), $file->contents);
     }
@@ -89,17 +95,37 @@ class Generator
             if ($line === '') {
                 continue;
             }
-            $keyValue = explode(':', $line);
+            $keyValue = explode(':', $line, 2);
             $key = trim($keyValue[0]);
-            $value = trim($keyValue[1]);
-            $info[$key] = $value;
+            if ($key !== 'defaults') {
+                $value = trim($keyValue[1]);
+                $info[$key] = $value;
+            } else {
+                $info['defaults'] = array_slice($lines, array_search($line, $lines) + 1);
+                break;
+            }
         }
 
         if (!isset($info['name']) || !isset($info['filename']) || !isset($info['path'])) {
             throw new \RuntimeException('Template header is missing some required properties (name, filename, path).');
         }
 
+        if (isset($info['defaults'])) {
+            foreach ($info['defaults'] as $value) {
+                $keyValue = explode(':', $value, 2);
+                $key = trim($keyValue[0]);
+                $value = trim($keyValue[1]);
+                $info['defaults'][$key] = $value;
+            }
+        }
+
         return TemplateHeader::fromArray($info);
+    }
+
+    public static function getDefaultArguments(string $content): array
+    {
+        $header = static::getTemplateHeader($content);
+        return $header->defaults;
     }
 
     public static function removeHeader(string $content): string
