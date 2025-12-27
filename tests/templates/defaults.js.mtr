@@ -1,0 +1,18 @@
+--- MTRGEN ---
+name: defaults-template
+filename: <% name %>.js
+path: assets/js
+defaults:
+    name: MyTemplate
+    event: DOMContentLoaded
+    id: my-template
+    classes: TEMP
+--- /MTRGEN ---
+document.addEventListener('<% event %>', function() {
+    // <% name|lower %>
+    var template = document.querySelector('#<% id="myId" %>');
+    var templateContent = template.content;
+    template.classList.add('<% classes="TEMPLATE"|lower %>');
+    var clone = document.importNode(templateContent, true);
+    document.body.appendChild(clone);
+});

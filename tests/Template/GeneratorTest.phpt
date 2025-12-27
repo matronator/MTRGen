@@ -71,6 +71,41 @@ class HelloCommand extends BaseGeneratorCommand
 
 EOT;
 
+public const HEADER_DEFAULTS_TEMPLATE = <<<EOT
+--- MTRGEN ---
+name: defaults-template
+filename: <% name %>.js
+path: assets/js
+defaults:
+    name: MyTemplate
+    event: DOMContentLoaded
+    id: my-template
+    classes: TEMP
+--- /MTRGEN ---
+
+document.addEventListener('<% event %>', function() {
+    // <% name|lower %>
+    var template = document.querySelector('#<% id="myId" %>');
+    var templateContent = template.content;
+    template.classList.add('<% classes="TEMPLATE"|lower %>');
+    var clone = document.importNode(templateContent, true);
+    document.body.appendChild(clone);
+});
+
+EOT;
+
+public const HEADER_DEFAULTS_TEMPLATE_PARSED = <<<EOT
+document.addEventListener('DOMContentLoaded', function() {
+    // mytemplate
+    var template = document.querySelector('#myId');
+    var templateContent = template.content;
+    template.classList.add('template');
+    var clone = document.importNode(templateContent, true);
+    document.body.appendChild(clone);
+});
+
+EOT;
+
     public function testGetTemplateHeader()
     {
         $expected = static::TEST_TEMPLATE;
@@ -108,10 +143,37 @@ EOT;
         Assert::matchFile('src/Mtrgen/Cli/HelloCommand.php', $expected);
     }
 
+    public function testGetDefaultArguments()
+    {
+        $expected = [
+            'name' => 'MyTemplate',
+            'event' => 'DOMContentLoaded',
+            'id' => 'my-template',
+            'classes' => 'TEMP',
+        ];
+
+        $arguments = Generator::getDefaultArguments(static::HEADER_DEFAULTS_TEMPLATE);
+        Assert::equal($arguments, $expected);
+    }
+
+    public function testParseWithGlobalDefaults()
+    {
+        $expected = static::HEADER_DEFAULTS_TEMPLATE_PARSED;
+
+        Generator::writeFiles(Generator::parseAnyFile('../templates/defaults.js.mtr'));
+
+        Assert::matchFile('assets/js/MyTemplate.js', $expected);
+    }
+
     public function tearDown(): void
     {
         if (file_exists('assets/js/my-template.js')) {
             unlink('assets/js/my-template.js');
+            rmdir('assets/js');
+            rmdir('assets');
+        }
+        if (file_exists('assets/js/MyTemplate.js')) {
+            unlink('assets/js/MyTemplate.js');
             rmdir('assets/js');
             rmdir('assets');
         }

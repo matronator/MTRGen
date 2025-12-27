@@ -28,6 +28,8 @@ class Generator
             $arguments["default:$key"] = $value;
         }
 
+        var_dump($arguments);
+
         $parsed = Parser::parseString($file, $arguments, false, new PatternsOption(null, null, $useCommentSyntax !== false ? self::COMMENT_PATTERN : null));
 
         $header = static::getTemplateHeader($parsed);
@@ -101,7 +103,7 @@ class Generator
                 $value = trim($keyValue[1]);
                 $info[$key] = $value;
             } else {
-                $info['defaults'] = array_slice($lines, array_search($line, $lines) + 1);
+                $info['defaults'] = array_slice($lines, 5);
                 break;
             }
         }
@@ -111,11 +113,17 @@ class Generator
         }
 
         if (isset($info['defaults'])) {
-            foreach ($info['defaults'] as $value) {
+            foreach ($info['defaults'] as $index => $value) {
+                $value = trim($value);
+                if ($value === '') {
+                    unset($info['defaults'][$index]);
+                    continue;
+                }
                 $keyValue = explode(':', $value, 2);
                 $key = trim($keyValue[0]);
                 $value = trim($keyValue[1]);
                 $info['defaults'][$key] = $value;
+                unset($info['defaults'][$index]);
             }
         }
 

@@ -21,6 +21,14 @@ class TemplateHeader
 
     public static function fromArray(array $array): static
     {
-        return new static($array['name'], $array['filename'], $array['path'], $array['defaults'] ?? []);
+        if (!isset($array['name']) || !isset($array['filename']) || !isset($array['path'])) {
+            throw new \RuntimeException('Template header is missing some required properties (name, filename, path).');
+        }
+
+        if (!isset($array['defaults'])) {
+            $array['defaults'] = [];
+        }
+
+        return new static($array['name'], $array['filename'], $array['path'], $array['defaults']);
     }
 }
