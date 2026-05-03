@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> New TypeScript port the JS ecosystem combining MTRGen and [Pars'Em](https://github.com/matronator/parsem) is out now! Check out [matronator/mtrgen-js](https://github.com/matronator/mtrgen-js)
+
 # MTRGen
 
 ![MTRGen Logo](docs/assets/images/logo.png)
@@ -8,7 +11,7 @@
 [![Total Downloads](https://poser.pugx.org/matronator/mtrgen/downloads)](https://packagist.org/packages/matronator/mtrgen)
 [![License](https://poser.pugx.org/matronator/mtrgen/license)](https://packagist.org/packages/matronator/mtrgen)
 
-#### [Official Website](https://mtrgen.matronator.cz) | [Documentation](https://mtrgen.matronator.cz/public/docs/) | [Template Repository](https://mtrgen.matronator.cz/repository)
+#### [Official Website](https://mtrgen.matronator.cz) | [Documentation](https://mtrgen.matronator.cz/public/docs/) | [Template Repository](https://mtrgen.matronator.cz/repository) | [TypeScript version](https://github.com/matronator/mtrgen-js)
 
 File generator for source code files.
 
