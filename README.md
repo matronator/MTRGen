@@ -1,5 +1,5 @@
 > [!IMPORTANT]
-> New TypeScript port the JS ecosystem combining MTRGen and [Pars'Em](https://github.com/matronator/parsem) is out now! Check out [matronator/mtrgen-js](https://github.com/matronator/mtrgen-js)
+> New TypeScript port for the JS ecosystem combining MTRGen and [Pars'Em](https://github.com/matronator/parsem) is out now! Check out [matronator/mtrgen-js](https://github.com/matronator/mtrgen-js)
 
 # MTRGen
 
